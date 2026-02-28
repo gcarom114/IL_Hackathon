@@ -1,13 +1,15 @@
 services:
   crop-doctor:
-    build: .
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - ./model_cache:/model_cache
-      - ./app:/app
-      - ./lora-out:/lora-out
-      - ./lora-out-hf:/lora-out-hf
+      - ../model_cache:/model_cache
+      - ../app:/app
+      - ../lora-out:/lora-out
+      - ../lora-out-hf:/lora-out-hf
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
       - LORA_PATH=${LORA_PATH:-/lora-out}
