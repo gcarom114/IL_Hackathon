@@ -13,8 +13,14 @@ Write-Host "Uploading code..."
 $excludes = "--exclude=.git --exclude=model_cache --exclude=venv --exclude=__pycache__"
 cmd /c "tar $excludes -czf - . | ssh $User@$Ip ""tar -xzf - -C $RemotePath"""
 
-# 3. Build and run Docker on VM
-Write-Host "Building and running Docker on VM..."
-ssh "$User@$Ip" "cd $RemotePath && docker-compose down && docker-compose up --build -d"
+# 3. Start server on VM in background
+Write-Host "Starting server on VM..."
+ssh "$User@$Ip" "cd $RemotePath/app && nohup /home/hackathon/.local/bin/uvicorn api:app --host 0.0.0.0 --port 8000 > ~/server.log 2>&1 &"
 
-Write-Host "Done! App available at http://$Ip`:8000"
+# 4. Open SSH tunnel - access app at http://localhost:8000
+Write-Host ""
+Write-Host "App is running! Opening tunnel..."
+Write-Host "Open http://localhost:8000 in your browser"
+Write-Host "Press Ctrl+C to close the tunnel"
+Write-Host ""
+ssh -L 8000:localhost:8000 "$User@$Ip"
