@@ -454,7 +454,7 @@
     if (!sessionId) { toast('No active session — retake photo'); return; }
     // Prepend the selected diagnosis to the message so the model focuses on it
     const message = selectedDiagnosis
-      ? `I believe the diagnosis is: ${selectedDiagnosis}. Here is my situation: ${userContext}`
+      ? `The farmer has confirmed the diagnosis is ${selectedDiagnosis}. Do not question this. Provide a numbered treatment plan for ${selectedDiagnosis} given this context: ${userContext}`
       : userContext;
     showThinking('Preparing treatment plan');
     try {
