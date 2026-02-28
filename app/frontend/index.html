@@ -8,455 +8,98 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --soil:    #1a1410;
-      --bark:    #2c2118;
-      --moss:    #2d4a2d;
-      --leaf:    #4a7c4a;
-      --sprout:  #7ab87a;
-      --sun:     #c8a84b;
-      --cream:   #f0e8d8;
-      --fog:     #8a8070;
-      --danger:  #c05a3a;
-      --radius:  4px;
+      --soil:   #1a1410; --bark:   #2c2118; --moss:   #2d4a2d;
+      --leaf:   #4a7c4a; --sprout: #7ab87a; --sun:    #c8a84b;
+      --cream:  #f0e8d8; --fog:    #8a8070; --danger: #c05a3a;
+      --warn:   #c8923a; --radius: 4px;
     }
-
-    html, body {
-      height: 100%;
-      background: var(--soil);
-      color: var(--cream);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      overflow: hidden;
-    }
-
-    /* ── Noise texture overlay ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 999;
-      opacity: 0.6;
-    }
-
-    /* ── Layout ── */
-    #app {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      flex-shrink: 0;
-    }
-
-    .logo {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .logo-mark {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      color: var(--sprout);
-      letter-spacing: -0.5px;
-    }
-
-    .logo-sub {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--fog);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .status-pill {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--moss);
-      color: var(--sprout);
-      letter-spacing: 1px;
-    }
-
-    /* ── Screens ── */
-    .screen {
-      display: none;
-      flex: 1;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .screen.active {
-      display: flex;
-    }
-
-    /* ── Step indicator ── */
-    .steps {
-      display: flex;
-      gap: 6px;
-      padding: 14px 24px;
-      flex-shrink: 0;
-    }
-
-    .step-dot {
-      height: 3px;
-      border-radius: 2px;
-      background: var(--bark);
-      flex: 1;
-      transition: background 0.4s;
-    }
-
-    .step-dot.done  { background: var(--leaf); }
-    .step-dot.active { background: var(--sprout); }
-
-    /* ── Camera screen ── */
-    #screen-camera {
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px 24px;
-      gap: 16px;
-    }
-
-    .camera-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--fog);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-align: center;
-      padding-top: 8px;
-    }
-
-    .viewfinder {
-      position: relative;
-      width: 100%;
-      flex: 1;
-      background: var(--bark);
-      border-radius: var(--radius);
-      overflow: hidden;
-      max-height: 55vh;
-    }
-
-    #video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
+    html, body { height: 100%; background: var(--soil); color: var(--cream); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: 0.6; }
+    #app { height: 100vh; display: flex; flex-direction: column; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
+    .logo { display: flex; align-items: baseline; gap: 8px; }
+    .logo-mark { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--sprout); letter-spacing: -0.5px; }
+    .logo-sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--fog); letter-spacing: 2px; text-transform: uppercase; }
+    .status-pill { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--moss); color: var(--sprout); letter-spacing: 1px; }
+    .steps { display: flex; gap: 6px; padding: 12px 24px; flex-shrink: 0; }
+    .step-dot { height: 3px; border-radius: 2px; background: var(--bark); flex: 1; transition: background 0.4s; }
+    .step-dot.done { background: var(--leaf); } .step-dot.active { background: var(--sprout); }
+    .screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .screen.active { display: flex; }
+    #screen-camera { align-items: center; justify-content: space-between; padding: 0 24px 20px; gap: 12px; }
+    .camera-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--fog); letter-spacing: 2px; text-transform: uppercase; text-align: center; padding-top: 6px; }
+    .viewfinder { position: relative; width: 100%; flex: 1; background: var(--bark); border-radius: var(--radius); overflow: hidden; max-height: 52vh; }
+    #video { width: 100%; height: 100%; object-fit: cover; display: block; }
     #canvas { display: none; }
-
-    /* Corner brackets */
-    .viewfinder::before,
-    .viewfinder::after {
-      content: '';
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      z-index: 2;
-    }
-    .viewfinder::before {
-      top: 12px; left: 12px;
-      border-top: 2px solid var(--sprout);
-      border-left: 2px solid var(--sprout);
-    }
-    .viewfinder::after {
-      bottom: 12px; right: 12px;
-      border-bottom: 2px solid var(--sprout);
-      border-right: 2px solid var(--sprout);
-    }
-
-    .corner-tr, .corner-bl {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      z-index: 2;
-    }
-    .corner-tr { top: 12px; right: 12px; border-top: 2px solid var(--sprout); border-right: 2px solid var(--sprout); }
-    .corner-bl { bottom: 12px; left: 12px; border-bottom: 2px solid var(--sprout); border-left: 2px solid var(--sprout); }
-
-    .scan-line {
-      position: absolute;
-      left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--sprout), transparent);
-      animation: scan 3s ease-in-out infinite;
-      opacity: 0.6;
-      z-index: 2;
-    }
-
-    @keyframes scan {
-      0%   { top: 15%; }
-      50%  { top: 85%; }
-      100% { top: 15%; }
-    }
-
-    .camera-hint {
-      font-family: 'DM Serif Display', serif;
-      font-style: italic;
-      font-size: 15px;
-      color: var(--fog);
-      text-align: center;
-    }
-
-    /* ── Buttons ── */
-    .btn-primary {
-      width: 100%;
-      padding: 16px;
-      background: var(--moss);
-      border: 1px solid var(--leaf);
-      color: var(--cream);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .btn-primary:hover  { background: var(--leaf); }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .btn-secondary {
-      width: 100%;
-      padding: 12px;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--fog);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
+    .viewfinder::before, .viewfinder::after { content: ''; position: absolute; width: 24px; height: 24px; z-index: 2; }
+    .viewfinder::before { top: 12px; left: 12px; border-top: 2px solid var(--sprout); border-left: 2px solid var(--sprout); }
+    .viewfinder::after { bottom: 12px; right: 12px; border-bottom: 2px solid var(--sprout); border-right: 2px solid var(--sprout); }
+    .corner-tr { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; z-index: 2; border-top: 2px solid var(--sprout); border-right: 2px solid var(--sprout); }
+    .corner-bl { position: absolute; bottom: 12px; left: 12px; width: 24px; height: 24px; z-index: 2; border-bottom: 2px solid var(--sprout); border-left: 2px solid var(--sprout); }
+    .scan-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--sprout), transparent); animation: scan 3s ease-in-out infinite; opacity: 0.6; z-index: 2; }
+    @keyframes scan { 0% { top: 15%; } 50% { top: 85%; } 100% { top: 15%; } }
+    .camera-hint { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 14px; color: var(--fog); text-align: center; }
+    .btn-primary { width: 100%; padding: 15px; background: var(--moss); border: 1px solid var(--leaf); color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: background 0.2s, transform 0.1s; }
+    .btn-primary:hover { background: var(--leaf); } .btn-primary:active { transform: scale(0.98); } .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
     .btn-secondary:hover { border-color: var(--fog); color: var(--cream); }
-
-    /* ── Thinking screen ── */
-    #screen-thinking {
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-      padding: 24px;
-    }
-
-    .thinking-icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      border: 1px solid var(--moss);
-      border-top-color: var(--sprout);
-      animation: spin 1.2s linear infinite;
-    }
-
+    .btn-danger { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(192,90,58,0.4); color: var(--danger); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .btn-danger:hover { border-color: var(--danger); background: rgba(192,90,58,0.1); }
+    .btn-row { display: flex; gap: 10px; width: 100%; }
+    .btn-row .btn-primary, .btn-row .btn-secondary, .btn-row .btn-danger { flex: 1; }
+    .divider { display: flex; align-items: center; gap: 12px; color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; width: 100%; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+    #screen-preview { padding: 16px 24px 20px; gap: 14px; align-items: center; }
+    .preview-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sun); letter-spacing: 2px; text-transform: uppercase; align-self: flex-start; }
+    .preview-img-wrap { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; border-radius: var(--radius); background: var(--bark); border: 1px solid rgba(255,255,255,0.07); min-height: 0; }
+    #preview-img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; border-radius: var(--radius); }
+    .preview-hint { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 14px; color: var(--fog); text-align: center; }
+    #screen-thinking { align-items: center; justify-content: center; gap: 24px; padding: 24px; }
+    .thinking-icon { width: 72px; height: 72px; border-radius: 50%; border: 1px solid var(--moss); border-top-color: var(--sprout); animation: spin 1.2s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .thinking-text {
-      font-family: 'DM Serif Display', serif;
-      font-style: italic;
-      font-size: 22px;
-      color: var(--cream);
-      text-align: center;
-    }
-
-    .thinking-sub {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--fog);
-      letter-spacing: 1px;
-    }
-
-    /* ── Diagnosis screen ── */
-    #screen-diagnosis {
-      padding: 16px 24px 24px;
-      gap: 16px;
-      overflow-y: auto;
-    }
-
-    .section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--sun);
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-    }
-
-    .diagnosis-card {
-      background: var(--bark);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: var(--radius);
-      padding: 18px;
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .diagnosis-text {
-      font-size: 15px;
-      line-height: 1.7;
-      color: var(--cream);
-    }
-
-    .snap-preview {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,0.07);
-    }
-
-    /* ── Voice screen ── */
-    #screen-voice {
-      padding: 16px 24px 24px;
-      gap: 16px;
-      overflow-y: auto;
-    }
-
-    .voice-area {
-      background: var(--bark);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: var(--radius);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .voice-prompt {
-      font-family: 'DM Serif Display', serif;
-      font-style: italic;
-      font-size: 16px;
-      color: var(--fog);
-      line-height: 1.5;
-    }
-
-    .mic-btn {
-      align-self: center;
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      border: 2px solid var(--leaf);
-      background: var(--moss);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      position: relative;
-    }
-
+    .thinking-text { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 22px; color: var(--cream); text-align: center; }
+    .thinking-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--fog); letter-spacing: 1px; }
+    #screen-diagnosis { padding: 16px 24px 20px; gap: 14px; overflow-y: auto; }
+    .diagnosis-layout { display: flex; gap: 16px; flex: 1; min-height: 0; overflow: hidden; }
+    .diagnosis-img-col { flex: 0 0 auto; width: 38%; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    .diagnosis-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
+    .diagnosis-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+    .diagnosis-text-col { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; }
+    .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--sun); letter-spacing: 2.5px; text-transform: uppercase; }
+    .confidence-block { display: flex; flex-direction: column; gap: 6px; }
+    .confidence-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .disease-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--cream); line-height: 1.2; }
+    .confidence-pct { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; }
+    .confidence-bar-track { height: 6px; background: var(--bark); border-radius: 3px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+    .confidence-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+    .diagnosis-card { background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 14px; flex: 1; overflow-y: auto; }
+    .diagnosis-body { font-size: 13px; line-height: 1.7; color: var(--cream); }
+    #screen-voice { padding: 16px 24px 20px; gap: 14px; overflow-y: auto; }
+    .voice-area { background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .voice-prompt { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 15px; color: var(--fog); line-height: 1.5; }
+    .mic-btn { align-self: center; width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--leaf); background: var(--moss); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .mic-btn:hover { border-color: var(--sprout); background: var(--leaf); }
-
-    .mic-btn.recording {
-      border-color: var(--danger);
-      background: rgba(192, 90, 58, 0.15);
-      animation: pulse-ring 1.2s ease-out infinite;
-    }
-
-    @keyframes pulse-ring {
-      0%   { box-shadow: 0 0 0 0 rgba(192,90,58,0.4); }
-      70%  { box-shadow: 0 0 0 14px rgba(192,90,58,0); }
-      100% { box-shadow: 0 0 0 0 rgba(192,90,58,0); }
-    }
-
-    .mic-icon { font-size: 24px; }
-
-    #transcript-box {
-      width: 100%;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius);
-      color: var(--cream);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      padding: 12px;
-      min-height: 70px;
-      resize: none;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    #transcript-box:focus { border-color: var(--leaf); }
-    #transcript-box::placeholder { color: var(--fog); }
-
-    /* ── Treatment screen ── */
-    #screen-treatment {
-      padding: 16px 24px 24px;
-      gap: 16px;
-      overflow-y: auto;
-    }
-
-    .treatment-card {
-      background: var(--bark);
-      border: 1px solid rgba(122, 184, 122, 0.15);
-      border-radius: var(--radius);
-      padding: 18px;
-      flex: 1;
-    }
-
-    .treatment-text {
-      font-size: 15px;
-      line-height: 1.75;
-      color: var(--cream);
-    }
-
-    /* ── Toast ── */
-    #toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: var(--danger);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 20px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      transition: transform 0.3s;
-      z-index: 1000;
-      white-space: nowrap;
-    }
-
+    .mic-btn.recording { border-color: var(--danger); background: rgba(192,90,58,0.15); animation: pulse-ring 1.2s ease-out infinite; }
+    @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(192,90,58,0.4); } 70% { box-shadow: 0 0 0 14px rgba(192,90,58,0); } 100% { box-shadow: 0 0 0 0 rgba(192,90,58,0); } }
+    .mic-icon { font-size: 22px; }
+    #transcript-box { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 12px; min-height: 65px; resize: none; outline: none; transition: border-color 0.2s; }
+    #transcript-box:focus { border-color: var(--leaf); } #transcript-box::placeholder { color: var(--fog); }
+    #screen-treatment { padding: 16px 24px 20px; gap: 14px; overflow-y: auto; }
+    .treatment-layout { display: flex; gap: 16px; flex: 1; min-height: 0; overflow: hidden; }
+    .treatment-img-col { flex: 0 0 auto; width: 32%; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    .treatment-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
+    .treatment-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+    .treatment-text-col { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; }
+    .treatment-card { background: var(--bark); border: 1px solid rgba(122,184,122,0.15); border-radius: var(--radius); padding: 14px; flex: 1; overflow-y: auto; }
+    .treatment-steps { display: flex; flex-direction: column; gap: 10px; }
+    .treatment-step { display: flex; gap: 12px; align-items: flex-start; }
+    .step-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--moss); border: 1px solid var(--leaf); color: var(--sprout); font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+    .step-text { font-size: 13px; line-height: 1.65; color: var(--cream); flex: 1; padding-top: 2px; }
+    .treatment-prose { font-size: 13px; line-height: 1.7; color: var(--cream); }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--danger); color: white; padding: 10px 20px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: transform 0.3s; z-index: 1000; white-space: nowrap; }
     #toast.show { transform: translateX(-50%) translateY(0); }
-
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--fog);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 2px;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.08);
-    }
-
-    .upload-btn {
-      font-size: 12px;
-    }
-    /* scrollbar */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 2px; }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 2px; }
   </style>
 </head>
 <body>
@@ -470,7 +113,6 @@
     <div class="status-pill" id="status-pill">READY</div>
   </header>
 
-  <!-- Step dots -->
   <div class="steps">
     <div class="step-dot active" id="dot-1"></div>
     <div class="step-dot" id="dot-2"></div>
@@ -488,10 +130,23 @@
     </div>
     <canvas id="canvas"></canvas>
     <p class="camera-hint">Position the diseased area within the frame</p>
-    <button class="btn-primary" id="snap-btn" onclick="snapPhoto()">⬤ &nbsp;Capture</button>
+    <button class="btn-primary" onclick="snapPhoto()">⬤ &nbsp;Capture</button>
     <div class="divider"><span>or</span></div>
-    <button class="btn-secondary upload-btn" onclick="document.getElementById('upload-input').click()">↑ &nbsp;Upload from device</button>
+    <button class="btn-secondary" onclick="document.getElementById('upload-input').click()">↑ &nbsp;Upload from device</button>
     <input type="file" id="upload-input" accept="image/*" style="display:none" onchange="handleUpload(event)" />
+  </div>
+
+  <!-- SCREEN 1b: Preview + confirm -->
+  <div class="screen" id="screen-preview">
+    <p class="preview-label">Confirm photo</p>
+    <div class="preview-img-wrap">
+      <img id="preview-img" src="" alt="preview" />
+    </div>
+    <p class="preview-hint">Does this clearly show the affected area?</p>
+    <div class="btn-row">
+      <button class="btn-danger" onclick="retakePhoto()">↩ Retake</button>
+      <button class="btn-primary" onclick="submitPhoto()">Analyze →</button>
+    </div>
   </div>
 
   <!-- SCREEN 2: Thinking -->
@@ -503,14 +158,31 @@
 
   <!-- SCREEN 3: Diagnosis -->
   <div class="screen" id="screen-diagnosis">
-    <p class="section-label">Plant captured</p>
-    <img id="snap-preview" class="snap-preview" src="" alt="captured plant" />
-    <p class="section-label">Diagnosis</p>
-    <div class="diagnosis-card">
-      <p class="diagnosis-text" id="diagnosis-text"></p>
+    <div class="diagnosis-layout">
+      <div class="diagnosis-img-col">
+        <p class="section-label">Captured</p>
+        <div class="diagnosis-img-wrap">
+          <img id="snap-preview" src="" alt="plant" />
+        </div>
+      </div>
+      <div class="diagnosis-text-col">
+        <p class="section-label">Diagnosis</p>
+        <div class="confidence-block" id="confidence-block" style="display:none">
+          <div class="confidence-header">
+            <span class="disease-name" id="disease-name"></span>
+            <span class="confidence-pct" id="confidence-pct"></span>
+          </div>
+          <div class="confidence-bar-track">
+            <div class="confidence-bar-fill" id="confidence-bar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="diagnosis-card">
+          <p class="diagnosis-body" id="diagnosis-text"></p>
+        </div>
+        <button class="btn-primary" onclick="goToVoice()">Get Treatment Plan →</button>
+        <button class="btn-secondary" onclick="resetApp()">↩ New Photo</button>
+      </div>
     </div>
-    <button class="btn-primary" onclick="goToVoice()">Get Treatment Plan →</button>
-    <button class="btn-secondary" onclick="resetApp()">↩ Retake Photo</button>
   </div>
 
   <!-- SCREEN 4: Voice input -->
@@ -523,208 +195,163 @@
       </button>
       <textarea id="transcript-box" placeholder="Tap mic to speak, or type here…" rows="3"></textarea>
     </div>
-    <button class="btn-primary" id="treatment-btn" onclick="getTreatment()">Get Treatment Plan →</button>
+    <button class="btn-primary" onclick="getTreatment()">Get Treatment Plan →</button>
     <button class="btn-secondary" onclick="showScreen('screen-diagnosis')">← Back to Diagnosis</button>
   </div>
 
   <!-- SCREEN 5: Treatment -->
   <div class="screen" id="screen-treatment">
-    <p class="section-label">Treatment plan</p>
-    <div class="treatment-card">
-      <p class="treatment-text" id="treatment-text"></p>
+    <div class="treatment-layout">
+      <div class="treatment-img-col">
+        <p class="section-label">Plant</p>
+        <div class="treatment-img-wrap">
+          <img id="treatment-preview" src="" alt="plant" />
+        </div>
+      </div>
+      <div class="treatment-text-col">
+        <p class="section-label">Treatment Plan</p>
+        <div class="treatment-card" id="treatment-card"></div>
+        <button class="btn-primary" onclick="goToVoice()">Ask Another Question</button>
+        <button class="btn-secondary" onclick="resetApp()">↩ New Diagnosis</button>
+      </div>
     </div>
-    <button class="btn-primary" onclick="goToVoice()">Ask Another Question</button>
-    <button class="btn-secondary" onclick="resetApp()">↩ New Diagnosis</button>
   </div>
 
 </div>
-
 <div id="toast"></div>
 
 <script>
-  const API = '';  // same origin — FastAPI serves this file
+  const API = '';
+  let sessionId = null, recognition = null, isRecording = false, pendingBlob = null;
 
-  let sessionId = null;
-  let recognition = null;
-  let isRecording = false;
-
-  // ── Upload handler ───────────────────────────────────────
   function handleUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      document.getElementById('snap-preview').src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-
-    sendDiagnosis(file);
-    showThinking('Running diagnosis');
-
-    // reset input so same file can be re-uploaded
     event.target.value = '';
+    pendingBlob = file;
+    showPreview(URL.createObjectURL(file));
   }
 
-  // ── Camera setup ──────────────────────────────────────────────
   async function startCamera() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } },
-        audio: false
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false });
       document.getElementById('video').srcObject = stream;
-    } catch (e) {
-      toast('Camera access denied — check browser permissions');
-    }
+    } catch (e) { toast('Camera access denied — check browser permissions'); }
   }
 
   function snapPhoto() {
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    canvas.width  = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const video = document.getElementById('video'), canvas = document.getElementById('canvas');
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0);
-
     const dataURL = canvas.toDataURL('image/jpeg', 0.85);
-    document.getElementById('snap-preview').src = dataURL;
-
-    canvas.toBlob(blob => sendDiagnosis(blob), 'image/jpeg', 0.85);
-    showThinking('Running diagnosis');
+    canvas.toBlob(blob => { pendingBlob = blob; showPreview(dataURL); }, 'image/jpeg', 0.85);
   }
 
-  // ── API calls ──────────────────────────────────────────────
+  function showPreview(url) {
+    document.getElementById('preview-img').src = url;
+    document.getElementById('snap-preview').src = url;
+    document.getElementById('treatment-preview').src = url;
+    showScreen('screen-preview');
+  }
+
+  function retakePhoto() { pendingBlob = null; showScreen('screen-camera'); }
+
+  function submitPhoto() {
+    if (!pendingBlob) return;
+    showThinking('Running diagnosis');
+    sendDiagnosis(pendingBlob);
+    pendingBlob = null;
+  }
+
   async function sendDiagnosis(blob) {
     const form = new FormData();
     form.append('file', blob, 'plant.jpg');
-
     try {
-      const res  = await fetch(`${API}/diagnose`, { method: 'POST', body: form });
+      const res = await fetch(`${API}/diagnose`, { method: 'POST', body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Diagnosis failed');
-
       sessionId = data.session_id;
-      document.getElementById('diagnosis-text').textContent = data.diagnosis;
-      setStatus('DIAGNOSED');
-      showScreen('screen-diagnosis');
-      setDots(2);
-    } catch (e) {
-      toast(e.message);
-      showScreen('screen-camera');
-    }
+      renderDiagnosis(data.diagnosis);
+      setStatus('DIAGNOSED'); showScreen('screen-diagnosis'); setDots(2);
+    } catch (e) { toast(e.message); showScreen('screen-camera'); }
   }
 
   async function getTreatment() {
     const message = document.getElementById('transcript-box').value.trim();
     if (!message) { toast('Add some context first'); return; }
     if (!sessionId) { toast('No active session — retake photo'); return; }
-
     showThinking('Preparing treatment plan');
-
     try {
-      const res  = await fetch(`${API}/treatment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, message })
-      });
+      const res = await fetch(`${API}/treatment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: sessionId, message }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Treatment failed');
+      renderTreatment(data.treatment);
+      setStatus('PLAN READY'); showScreen('screen-treatment'); setDots(3);
+    } catch (e) { toast(e.message); showScreen('screen-voice'); }
+  }
 
-      document.getElementById('treatment-text').textContent = data.treatment;
-      setStatus('PLAN READY');
-      showScreen('screen-treatment');
-      setDots(3);
-    } catch (e) {
-      toast(e.message);
-      showScreen('screen-voice');
+  function renderDiagnosis(text) {
+    const confMatch = text.match(/(\d{1,3})\s*%/);
+    const confidence = confMatch ? parseInt(confMatch[1]) : null;
+    const nameMatch = text.match(/^([^—\-\n\(\.]{4,60}?)(?:\s*[—\-\(:]|\s*\d{1,3}%)/);
+    const diseaseName = nameMatch ? nameMatch[1].trim() : null;
+    const block = document.getElementById('confidence-block');
+    if (confidence !== null && diseaseName) {
+      document.getElementById('disease-name').textContent = diseaseName;
+      const pct = document.getElementById('confidence-pct');
+      pct.textContent = `${confidence}%`; pct.style.color = confColor(confidence);
+      const bar = document.getElementById('confidence-bar');
+      bar.style.background = confColor(confidence);
+      setTimeout(() => { bar.style.width = `${confidence}%`; }, 50);
+      block.style.display = 'flex'; block.style.flexDirection = 'column';
+    } else { block.style.display = 'none'; }
+    document.getElementById('diagnosis-text').textContent = text;
+  }
+
+  function confColor(p) { return p >= 75 ? 'var(--sprout)' : p >= 50 ? 'var(--sun)' : 'var(--warn)'; }
+
+  function renderTreatment(text) {
+    const card = document.getElementById('treatment-card');
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const steps = [], prose = [];
+    lines.forEach(line => {
+      const num = line.match(/^(\d+)\.\s+(.+)/);
+      const bul = line.match(/^[-•*]\s+(.+)/);
+      if (num) steps.push({ n: num[1], text: num[2] });
+      else if (bul) steps.push({ n: steps.length + 1, text: bul[1] });
+      else prose.push(line);
+    });
+    if (steps.length > 0) {
+      const stepsHTML = steps.map(s => `<div class="treatment-step"><div class="step-num">${s.n}</div><p class="step-text">${esc(s.text)}</p></div>`).join('');
+      const proseHTML = prose.length ? `<p class="treatment-prose" style="margin-top:12px">${esc(prose.join(' '))}</p>` : '';
+      card.innerHTML = `<div class="treatment-steps">${stepsHTML}</div>${proseHTML}`;
+    } else {
+      card.innerHTML = text.split(/\n{2,}/).map(p => `<p class="treatment-prose" style="margin-bottom:10px">${esc(p.trim())}</p>`).join('');
     }
   }
 
-  // ── Voice recognition ──────────────────────────────────────
+  function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
   function setupSpeech() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = (e) => {
-      let transcript = '';
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        transcript += e.results[i][0].transcript;
-      }
-      document.getElementById('transcript-box').value = transcript;
-    };
-
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;
+    recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
+    recognition.onresult = (e) => { let t = ''; for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript; document.getElementById('transcript-box').value = t; };
     recognition.onend = () => stopRecording();
   }
 
-  function toggleVoice() {
-    if (!recognition) { toast('Voice not supported — type instead'); return; }
-    isRecording ? stopRecording() : startRecording();
-  }
+  function toggleVoice() { if (!recognition) { toast('Use Chrome for voice — or type below'); return; } isRecording ? stopRecording() : startRecording(); }
+  function startRecording() { isRecording = true; document.getElementById('mic-btn').classList.add('recording'); document.getElementById('mic-icon').textContent = '⏹'; document.getElementById('transcript-box').value = ''; recognition.start(); }
+  function stopRecording() { isRecording = false; document.getElementById('mic-btn').classList.remove('recording'); document.getElementById('mic-icon').textContent = '🎙'; try { recognition.stop(); } catch(_) {} }
 
-  function startRecording() {
-    isRecording = true;
-    document.getElementById('mic-btn').classList.add('recording');
-    document.getElementById('mic-icon').textContent = '⏹';
-    document.getElementById('transcript-box').value = '';
-    recognition.start();
-  }
+  function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+  function showThinking(sub) { document.getElementById('thinking-sub').textContent = sub; showScreen('screen-thinking'); }
+  function goToVoice() { document.getElementById('transcript-box').value = ''; showScreen('screen-voice'); }
+  function setDots(active) { for (let i = 1; i <= 3; i++) { const d = document.getElementById(`dot-${i}`); d.className = 'step-dot' + (i < active ? ' done' : i === active ? ' active' : ''); } }
+  function setStatus(t) { document.getElementById('status-pill').textContent = t; }
+  function resetApp() { sessionId = null; pendingBlob = null; document.getElementById('transcript-box').value = ''; setStatus('READY'); setDots(1); showScreen('screen-camera'); }
+  function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3200); }
 
-  function stopRecording() {
-    isRecording = false;
-    document.getElementById('mic-btn').classList.remove('recording');
-    document.getElementById('mic-icon').textContent = '🎙';
-    try { recognition.stop(); } catch(_) {}
-  }
-
-  // ── Screen management ─────────────────────────────────────
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-  }
-
-  function showThinking(sub) {
-    document.getElementById('thinking-sub').textContent = sub;
-    showScreen('screen-thinking');
-  }
-
-  function goToVoice() {
-    document.getElementById('transcript-box').value = '';
-    showScreen('screen-voice');
-  }
-
-  function setDots(active) {
-    for (let i = 1; i <= 3; i++) {
-      const dot = document.getElementById(`dot-${i}`);
-      dot.className = 'step-dot' + (i < active ? ' done' : i === active ? ' active' : '');
-    }
-  }
-
-  function setStatus(text) {
-    document.getElementById('status-pill').textContent = text;
-  }
-
-  function resetApp() {
-    sessionId = null;
-    document.getElementById('transcript-box').value = '';
-    setStatus('READY');
-    setDots(1);
-    showScreen('screen-camera');
-  }
-
-  // ── Toast ──────────────────────────────────────────────────
-  function toast(msg) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 3200);
-  }
-
-  // ── Init ──────────────────────────────────────────────────
   startCamera();
   setupSpeech();
 </script>
