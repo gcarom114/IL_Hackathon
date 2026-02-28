@@ -147,6 +147,36 @@
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--danger); color: white; padding: 10px 20px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: transform 0.3s; z-index: 1000; white-space: nowrap; }
     #toast.show { transform: translateX(-50%) translateY(0); }
     ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 2px; }
+
+    /* Severity */
+    .severity-row { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .severity-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--fog); letter-spacing: 1.5px; text-transform: uppercase; }
+    .severity-pips { display: flex; gap: 3px; }
+    .severity-pip { width: 10px; height: 10px; border-radius: 2px; background: rgba(255,255,255,0.08); transition: background 0.3s; }
+    .severity-pip.active.sev-1, .severity-pip.active.sev-2 { background: var(--sprout); }
+    .severity-pip.active.sev-3 { background: var(--sun); }
+    .severity-pip.active.sev-4, .severity-pip.active.sev-5 { background: var(--danger); }
+    .severity-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1px; }
+
+    /* Treatment header */
+    .treatment-header { flex-shrink: 0; background: rgba(45,74,45,0.3); border: 1px solid rgba(122,184,122,0.2); border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .treatment-disease-name { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--cream); }
+
+    /* Share button */
+    .btn-share { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(200,168,75,0.3); color: var(--sun); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .btn-share:hover { border-color: var(--sun); background: rgba(200,168,75,0.08); }
+
+    /* History screen */
+    #screen-history { padding: 16px 24px 20px; gap: 12px; overflow: hidden; }
+    .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    .history-empty { flex: 1; display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-style: italic; font-size: 16px; color: var(--fog); }
+    .history-card { background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; transition: border-color 0.2s; flex-shrink: 0; }
+    .history-card:hover { border-color: rgba(122,184,122,0.3); }
+    .history-thumb { width: 48px; height: 48px; border-radius: 3px; object-fit: cover; flex-shrink: 0; background: var(--soil); border: 1px solid rgba(255,255,255,0.06); }
+    .history-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .history-disease { font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--fog); letter-spacing: 1px; }
+    .history-badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 10px; letter-spacing: 1px; }
   </style>
 </head>
 <body>
@@ -157,7 +187,10 @@
       <span class="logo-mark">Crop Doctor</span>
       <span class="logo-sub">Field AI</span>
     </div>
-    <div class="status-pill" id="status-pill">READY</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="showScreen('screen-history')" style="background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--fog);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:color 0.2s,border-color 0.2s" onmouseover="this.style.color='var(--cream)';this.style.borderColor='var(--fog)'" onmouseout="this.style.color='var(--fog)';this.style.borderColor='rgba(255,255,255,0.1)'">HISTORY</button>
+      <div class="status-pill" id="status-pill">READY</div>
+    </div>
   </header>
 
   <div class="steps">
@@ -207,6 +240,11 @@
       <div class="diag-img-col">
         <p class="section-label">Captured</p>
         <div class="diag-img-wrap"><img id="snap-preview" src="" alt="plant" /></div>
+        <div class="severity-row" id="severity-row" style="display:none">
+          <span class="severity-label">Severity</span>
+          <div class="severity-pips" id="severity-pips"></div>
+          <span class="severity-text" id="severity-text"></span>
+        </div>
       </div>
       <div class="diag-text-col" id="diag-text-col">
         <!-- filled by JS -->
@@ -240,12 +278,23 @@
         <div class="treat-img-wrap"><img id="treatment-preview" src="" alt="plant" /></div>
       </div>
       <div class="treat-text-col">
-        <p class="section-label">Treatment Plan</p>
+        <div class="treatment-header" id="treatment-header">
+          <p class="section-label">Treatment Plan</p>
+          <p class="treatment-disease-name" id="treatment-disease-name"></p>
+        </div>
         <div class="treatment-card" id="treatment-card"></div>
+        <button class="btn-share" onclick="shareReport()">↑ &nbsp;Export Summary</button>
         <button class="btn-primary" onclick="goToVoice()">Ask Another Question</button>
         <button class="btn-secondary" onclick="resetApp()">↩ New Diagnosis</button>
       </div>
     </div>
+  </div>
+
+  <!-- SCREEN 6: History -->
+  <div class="screen" id="screen-history">
+    <p class="section-label">Past Diagnoses</p>
+    <div class="history-list" id="history-list"></div>
+    <button class="btn-secondary" onclick="showScreen('screen-camera')">← Back</button>
   </div>
 
 </div>
@@ -254,6 +303,134 @@
 <script>
   const API = '';
   let sessionId = null, recognition = null, isRecording = false, pendingBlob = null, selectedDiagnosis = null;
+  let currentDiagnoses = [], currentSeverity = null, currentTreatment = null, currentImageUrl = null;
+
+  // ── Severity ──────────────────────────────────────────────
+  function parseSeverity(text) {
+    const lower = text.toLowerCase();
+    if (/severe|critical|advanced|extensive|widespread|serious/i.test(lower)) return 5;
+    if (/moderate.{0,20}severe|significant|heavy/i.test(lower)) return 4;
+    if (/moderate|medium|notable/i.test(lower)) return 3;
+    if (/mild.{0,20}moderate|early.{0,20}stage|developing/i.test(lower)) return 2;
+    if (/mild|minor|slight|early|minimal|low/i.test(lower)) return 1;
+    return null;
+  }
+
+  const SEV_LABELS = ['', 'Mild', 'Mild–Moderate', 'Moderate', 'Moderate–Severe', 'Severe'];
+  const SEV_COLORS = ['', 'var(--sprout)', 'var(--sprout)', 'var(--sun)', 'var(--warn)', 'var(--danger)'];
+
+  function renderSeverity(level) {
+    if (!level) { document.getElementById('severity-row').style.display = 'none'; return; }
+    currentSeverity = level;
+    const pips = document.getElementById('severity-pips');
+    pips.innerHTML = Array.from({length: 5}, (_, i) => {
+      const active = i < level;
+      return `<div class="severity-pip ${active ? `active sev-${level}` : ''}"></div>`;
+    }).join('');
+    const txt = document.getElementById('severity-text');
+    txt.textContent = SEV_LABELS[level];
+    txt.style.color = SEV_COLORS[level];
+    document.getElementById('severity-row').style.display = 'flex';
+  }
+
+  // ── History ───────────────────────────────────────────────
+  function saveToHistory(entry) {
+    try {
+      const history = JSON.parse(localStorage.getItem('cropDoctorHistory') || '[]');
+      history.unshift(entry);
+      localStorage.setItem('cropDoctorHistory', JSON.stringify(history.slice(0, 20)));
+    } catch(e) {}
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    let history = [];
+    try { history = JSON.parse(localStorage.getItem('cropDoctorHistory') || '[]'); } catch(e) {}
+
+    if (!history.length) {
+      list.innerHTML = '<p class="history-empty">No past diagnoses yet</p>';
+      return;
+    }
+
+    list.innerHTML = history.map((entry, i) => {
+      const sev = entry.severity ? `<span class="history-badge" style="background:${SEV_COLORS[entry.severity]}22;color:${SEV_COLORS[entry.severity]};border:1px solid ${SEV_COLORS[entry.severity]}44">${SEV_LABELS[entry.severity]}</span>` : '';
+      const date = new Date(entry.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return `
+        <div class="history-card" onclick="loadHistoryEntry(${i})">
+          ${entry.imageUrl ? `<img class="history-thumb" src="${entry.imageUrl}" onerror="this.style.display='none'" />` : ''}
+          <div class="history-body">
+            <p class="history-disease">${esc(entry.disease)}</p>
+            <p class="history-meta">${date} &nbsp;·&nbsp; ${entry.confidence}% confidence</p>
+            ${sev}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function loadHistoryEntry(index) {
+    try {
+      const history = JSON.parse(localStorage.getItem('cropDoctorHistory') || '[]');
+      const entry = history[index];
+      if (!entry) return;
+      // Restore state and jump to treatment if available
+      selectedDiagnosis = entry.disease;
+      if (entry.imageUrl) {
+        document.getElementById('snap-preview').src = entry.imageUrl;
+        document.getElementById('treatment-preview').src = entry.imageUrl;
+        currentImageUrl = entry.imageUrl;
+      }
+      if (entry.treatment) {
+        document.getElementById('treatment-disease-name').textContent = entry.disease;
+        renderTreatment(entry.treatment);
+        showScreen('screen-treatment');
+        setDots(3);
+      } else {
+        toast('No treatment saved for this entry');
+      }
+    } catch(e) {}
+  }
+
+  // ── Share / export ────────────────────────────────────────
+  function shareReport() {
+    const disease = selectedDiagnosis || 'Unknown';
+    const sev = currentSeverity ? SEV_LABELS[currentSeverity] : 'Not assessed';
+    const conf = currentDiagnoses.find(d => d.name === disease);
+    const confidence = conf ? `${conf.confidence}%` : '';
+    const treatEl = document.getElementById('treatment-card');
+    const treatText = treatEl ? treatEl.innerText : '';
+    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const summary = [
+      `CROP DOCTOR — FIELD REPORT`,
+      `Date: ${date}`,
+      ``,
+      `DIAGNOSIS: ${disease}${confidence ? ` (${confidence} confidence)` : ''}`,
+      `Severity: ${sev}`,
+      ``,
+      `TREATMENT PLAN:`,
+      treatText,
+      ``,
+      `Generated by Crop Doctor · Powered by Gemma 3n`
+    ].join('\n');
+
+    // Try Web Share API first (mobile), fall back to clipboard
+    if (navigator.share) {
+      navigator.share({ title: `Crop Doctor: ${disease}`, text: summary })
+        .catch(() => copyToClipboard(summary));
+    } else {
+      copyToClipboard(summary);
+    }
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+      .then(() => toast('Report copied to clipboard!'))
+      .catch(() => {
+        // Final fallback: open in new window
+        const w = window.open('', '_blank');
+        w.document.write(`<pre style="font-family:monospace;white-space:pre-wrap;padding:20px">${text}</pre>`);
+      });
+  }
 
   // ── Disease image lookup ──────────────────────────────────
   // Maps keywords in disease names to reference image URLs
@@ -340,8 +517,12 @@
   // ── Render diagnosis cards ────────────────────────────────
   function renderDiagnosis(text) {
     const diagnoses = parseDiagnoses(text);
+    currentDiagnoses = diagnoses;
     const col = document.getElementById('diag-text-col');
     col.innerHTML = '<p class="section-label">Top Diagnoses</p>';
+
+    // Extract severity from full text
+    renderSeverity(parseSeverity(text));
 
     diagnoses.forEach((d, i) => {
       const isPrimary = i === 0;
@@ -382,6 +563,11 @@
 
   // ── Render treatment ──────────────────────────────────────
   function renderTreatment(text) {
+    currentTreatment = text;
+    // Set disease name in header
+    if (selectedDiagnosis) {
+      document.getElementById('treatment-disease-name').textContent = selectedDiagnosis;
+    }
     const card = document.getElementById('treatment-card');
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
     const steps = [], prose = [];
@@ -426,6 +612,7 @@
   }
 
   function showPreview(url) {
+    currentImageUrl = url;
     document.getElementById('preview-img').src = url;
     document.getElementById('snap-preview').src = url;
     document.getElementById('treatment-preview').src = url;
@@ -462,6 +649,18 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Treatment failed');
       renderTreatment(data.treatment);
+      // Save to history
+      if (selectedDiagnosis) {
+        const topDiag = currentDiagnoses.find(d => d.name === selectedDiagnosis) || currentDiagnoses[0];
+        saveToHistory({
+          disease: selectedDiagnosis,
+          confidence: topDiag ? topDiag.confidence : 0,
+          severity: currentSeverity,
+          treatment: data.treatment,
+          imageUrl: currentImageUrl,
+          timestamp: Date.now()
+        });
+      }
       setStatus('PLAN READY'); showScreen('screen-treatment'); setDots(3);
     } catch (e) { toast(e.message); showScreen('screen-voice'); }
   }
@@ -478,7 +677,11 @@
   function stopRecording() { isRecording = false; document.getElementById('mic-btn').classList.remove('recording'); document.getElementById('mic-icon').textContent = '🎙'; try { recognition.stop(); } catch(_) {} }
 
   // ── Util ──────────────────────────────────────────────────
-  function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (id === 'screen-history') renderHistory();
+  }
   function showThinking(sub) { document.getElementById('thinking-sub').textContent = sub; showScreen('screen-thinking'); }
   function selectDiagnosis(index, name) {
     selectedDiagnosis = name;
@@ -505,7 +708,9 @@
   function setStatus(t) { document.getElementById('status-pill').textContent = t; }
   function resetApp() {
     sessionId = null; pendingBlob = null; selectedDiagnosis = null;
+    currentDiagnoses = []; currentSeverity = null; currentTreatment = null; currentImageUrl = null;
     document.getElementById('transcript-box').value = '';
+    document.getElementById('severity-row').style.display = 'none';
     const btn = document.getElementById('get-treatment-btn');
     btn.disabled = true; btn.style.opacity = '0.4'; btn.textContent = 'Select a diagnosis →';
     setStatus('READY'); setDots(1); showScreen('screen-camera');
