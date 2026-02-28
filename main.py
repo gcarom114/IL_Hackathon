@@ -17,11 +17,12 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 import numpy as np
 import typer
 from PIL import Image, UnidentifiedImageError
+import requests
 
 app = typer.Typer(add_completion=False, help="Plant diagnostic helper using a Gemma 3n-style agent.")
 
@@ -97,16 +98,87 @@ class Gemma3nAgent:
         self.use_llm = use_llm and bool(os.getenv("GEMMA3N_ENDPOINT"))
         self.endpoint = os.getenv("GEMMA3N_ENDPOINT")
 
-    def _llm_call(self, prompt: str) -> str:
-        # Placeholder: implement your own HTTP call to Gemma 3n here.
-        # Returning NotImplemented keeps the offline flow alive.
-        return "LLM call not implemented; falling back to heuristics."
+    def _llm_call(self, payload: Dict) -> Optional[List[IssueHypothesis]]:
+        """
+        POSTs the structured payload to the GEMMA3N_ENDPOINT.
+        Expected JSON response shape (flexible):
+        {
+          "hypotheses": [
+            {"name": "Early blight", "confidence": 0.62, "rationale": "…"},
+            ...
+          ]
+        }
+        If the endpoint returns plain text, we attempt to parse line-wise.
+        Returns None on any failure to allow heuristic fallback.
+        """
+        if not self.endpoint:
+            return None
+
+        try:
+            resp = requests.post(
+                self.endpoint,
+                json=payload,
+                timeout=15,
+                headers={"Content-Type": "application/json"},
+            )
+            resp.raise_for_status()
+        except Exception as exc:
+            print(f"[Gemma3nAgent] LLM call failed: {exc}; falling back to heuristics.")
+            return None
+
+        try:
+            data = resp.json()
+        except ValueError:
+            text = resp.text
+            return self._parse_text_response(text)
+
+        if isinstance(data, dict) and "hypotheses" in data and isinstance(data["hypotheses"], list):
+            parsed: List[IssueHypothesis] = []
+            for item in data["hypotheses"][:3]:
+                if not isinstance(item, dict):
+                    continue
+                name = str(item.get("name", "Unknown issue"))
+                conf = float(item.get("confidence", 0.0))
+                rationale = str(item.get("rationale", ""))
+                parsed.append(IssueHypothesis(name, conf, rationale))
+            if parsed:
+                return parsed
+
+        # Fall back to parsing if the shape is unexpected
+        return self._parse_text_response(resp.text)
+
+    def _parse_text_response(self, text: str) -> Optional[List[IssueHypothesis]]:
+        """
+        Very lightweight parser for text responses where the model returns
+        bullet lines like '1. Leaf spot (0.61) - dark lesions...'
+        """
+        lines = [ln.strip(" -") for ln in text.splitlines() if ln.strip()]
+        hyps: List[IssueHypothesis] = []
+        for ln in lines:
+            # Try to extract leading rank and confidence in parentheses
+            # Examples: "1. Early blight (0.64) - dark lesions"
+            name = ln
+            conf = 0.0
+            if "(" in ln and ")" in ln:
+                try:
+                    before, after = ln.split("(", 1)
+                    conf_str, rest = after.split(")", 1)
+                    conf = float(conf_str.strip())
+                    name = before.replace(".", " ").strip() + rest
+                except Exception:
+                    pass
+            hyps.append(IssueHypothesis(name=name.strip(), confidence=conf, rationale=""))
+            if len(hyps) == 3:
+                break
+        return hyps or None
 
     def rank_issues(self, feats: Dict[str, float], notes: str) -> List[IssueHypothesis]:
         # Optional LLM path: you can build a JSON spec and let Gemma respond.
         if self.use_llm:
-            _ = self._llm_call(json.dumps({"features": feats, "notes": notes}))
-            # Fall through to heuristic ranking until real endpoint is provided.
+            payload = {"features": feats, "notes": notes, "top_k": 3}
+            llm_hyps = self._llm_call(payload)
+            if llm_hyps:
+                return llm_hyps
 
         candidates: List[Tuple[str, float, str]] = []
         chlorosis = max(0.0, feats["yellowing"] * 1.5)
