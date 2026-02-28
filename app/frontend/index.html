@@ -143,6 +143,13 @@
     .step-text { font-size: 13px; line-height: 1.65; color: var(--cream); flex: 1; padding-top: 2px; }
     .treatment-prose { font-size: 13px; line-height: 1.7; color: var(--cream); margin-bottom: 10px; }
 
+    /* Language selector */
+    .lang-bar { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 0 4px; }
+    .lang-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 5px 10px; border-radius: 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+    .lang-btn:hover { border-color: var(--fog); color: var(--cream); }
+    .lang-btn.active { border-color: var(--sprout); color: var(--sprout); background: rgba(122,184,122,0.08); }
+    .lang-flag { font-size: 14px; line-height: 1; }
+
     /* Toast */
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--danger); color: white; padding: 10px 20px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: transform 0.3s; z-index: 1000; white-space: nowrap; }
     #toast.show { transform: translateX(-50%) translateY(0); }
@@ -201,7 +208,7 @@
 
   <!-- SCREEN 1: Camera -->
   <div class="screen active" id="screen-camera">
-    <p class="camera-label">Point at affected plant</p>
+    <p class="camera-label" data-i18n="cameraLabel">Point at affected plant</p>
     <div class="viewfinder">
       <video id="video" autoplay playsinline muted></video>
       <div class="scan-line"></div>
@@ -209,10 +216,18 @@
       <div class="corner-bl"></div>
     </div>
     <canvas id="canvas"></canvas>
-    <p class="camera-hint">Position the diseased area within the frame</p>
-    <button class="btn-primary" onclick="snapPhoto()">⬤ &nbsp;Capture</button>
-    <div class="divider"><span>or</span></div>
-    <button class="btn-secondary" onclick="document.getElementById('upload-input').click()">↑ &nbsp;Upload from device</button>
+    <div class="lang-bar" id="lang-bar">
+      <button class="lang-btn active" onclick="setLang('en')" data-lang="en"><span class="lang-flag">🇬🇧</span> EN</button>
+      <button class="lang-btn" onclick="setLang('es')" data-lang="es"><span class="lang-flag">🇪🇸</span> ES</button>
+      <button class="lang-btn" onclick="setLang('fr')" data-lang="fr"><span class="lang-flag">🇫🇷</span> FR</button>
+      <button class="lang-btn" onclick="setLang('hi')" data-lang="hi"><span class="lang-flag">🇮🇳</span> HI</button>
+      <button class="lang-btn" onclick="setLang('sw')" data-lang="sw"><span class="lang-flag">🇰🇪</span> SW</button>
+      <button class="lang-btn" onclick="setLang('pt')" data-lang="pt"><span class="lang-flag">🇧🇷</span> PT</button>
+    </div>
+    <p class="camera-hint" data-i18n="cameraHint">Position the diseased area within the frame</p>
+    <button class="btn-primary" onclick="snapPhoto()" data-i18n="capture">⬤ &nbsp;Capture</button>
+    <div class="divider"><span data-i18n="or">or</span></div>
+    <button class="btn-secondary" onclick="document.getElementById('upload-input').click()" data-i18n="upload">↑ &nbsp;Upload from device</button>
     <input type="file" id="upload-input" accept="image/*" style="display:none" onchange="handleUpload(event)" />
   </div>
 
@@ -304,6 +319,284 @@
   const API = '';
   let sessionId = null, recognition = null, isRecording = false, pendingBlob = null, selectedDiagnosis = null;
   let currentDiagnoses = [], currentSeverity = null, currentTreatment = null, currentImageUrl = null;
+  let currentLang = 'en';
+
+  // ── Translations ──────────────────────────────────────────
+  const LANGS = {
+    en: {
+      code: 'en-US', name: 'English',
+      cameraLabel: 'Point at affected plant',
+      cameraHint: 'Position the diseased area within the frame',
+      capture: '⬤ \u00a0Capture',
+      or: 'or',
+      upload: '↑ \u00a0Upload from device',
+      confirmPhoto: 'Confirm photo',
+      confirmHint: 'Does this clearly show the affected area?',
+      retake: '↩ Retake',
+      analyze: 'Analyze →',
+      analyzing: 'Analyzing your plant…',
+      runningDiag: 'Running diagnosis',
+      preparingTreat: 'Preparing treatment plan',
+      topDiagnoses: 'Top Diagnoses',
+      mostLikely: 'Most likely',
+      second: '2nd possibility',
+      third: '3rd possibility',
+      selectDiag: 'Select a diagnosis →',
+      newPhoto: '↩ New Photo',
+      getTreatment: 'Get Treatment →',
+      tellMore: 'Tell the doctor more',
+      voicePrompt: 'What treatments do you have available? How many acres are affected? What\'s the recent weather been like?',
+      micPlaceholder: 'Tap mic to speak, or type here…',
+      getTreatmentPlan: 'Get Treatment Plan →',
+      backDiag: '← Back to Diagnosis',
+      treatmentPlan: 'Treatment Plan',
+      export: '↑ \u00a0Export Summary',
+      askAnother: 'Ask Another Question',
+      newDiag: '↩ New Diagnosis',
+      pastDiag: 'Past Diagnoses',
+      noPastDiag: 'No past diagnoses yet',
+      back: '← Back',
+      history: 'HISTORY',
+      severity: 'Severity',
+      sevLabels: ['', 'Mild', 'Mild–Moderate', 'Moderate', 'Moderate–Severe', 'Severe'],
+      captured: 'Captured',
+      plant: 'Plant',
+      noContext: 'Add some context first',
+      noSession: 'No active session — retake photo',
+      reportCopied: 'Report copied to clipboard!',
+    },
+    es: {
+      code: 'es-ES', name: 'Español',
+      cameraLabel: 'Apunta a la planta afectada',
+      cameraHint: 'Coloca el área enferma dentro del marco',
+      capture: '⬤ \u00a0Capturar',
+      or: 'o',
+      upload: '↑ \u00a0Subir imagen',
+      confirmPhoto: 'Confirmar foto',
+      confirmHint: '¿Se ve claramente el área afectada?',
+      retake: '↩ Repetir',
+      analyze: 'Analizar →',
+      analyzing: 'Analizando tu planta…',
+      runningDiag: 'Ejecutando diagnóstico',
+      preparingTreat: 'Preparando plan de tratamiento',
+      topDiagnoses: 'Principales diagnósticos',
+      mostLikely: 'Más probable',
+      second: '2ª posibilidad',
+      third: '3ª posibilidad',
+      selectDiag: 'Selecciona un diagnóstico →',
+      newPhoto: '↩ Nueva foto',
+      getTreatment: 'Ver tratamiento →',
+      tellMore: 'Cuéntale más al doctor',
+      voicePrompt: '¿Qué tratamientos tienes disponibles? ¿Cuántas hectáreas están afectadas? ¿Cómo ha sido el clima últimamente?',
+      micPlaceholder: 'Toca el mic para hablar, o escribe aquí…',
+      getTreatmentPlan: 'Obtener plan de tratamiento →',
+      backDiag: '← Volver al diagnóstico',
+      treatmentPlan: 'Plan de tratamiento',
+      export: '↑ \u00a0Exportar resumen',
+      askAnother: 'Hacer otra pregunta',
+      newDiag: '↩ Nuevo diagnóstico',
+      pastDiag: 'Diagnósticos anteriores',
+      noPastDiag: 'Sin diagnósticos anteriores',
+      back: '← Volver',
+      history: 'HISTORIAL',
+      severity: 'Gravedad',
+      sevLabels: ['', 'Leve', 'Leve–Moderada', 'Moderada', 'Moderada–Grave', 'Grave'],
+      captured: 'Capturada',
+      plant: 'Planta',
+      noContext: 'Agrega algo de contexto primero',
+      noSession: 'Sin sesión activa — vuelve a tomar la foto',
+      reportCopied: '¡Reporte copiado al portapapeles!',
+    },
+    fr: {
+      code: 'fr-FR', name: 'Français',
+      cameraLabel: 'Pointez vers la plante affectée',
+      cameraHint: 'Placez la zone malade dans le cadre',
+      capture: '⬤ \u00a0Capturer',
+      or: 'ou',
+      upload: '↑ \u00a0Téléverser une image',
+      confirmPhoto: 'Confirmer la photo',
+      confirmHint: 'La zone affectée est-elle bien visible?',
+      retake: '↩ Reprendre',
+      analyze: 'Analyser →',
+      analyzing: 'Analyse de votre plante…',
+      runningDiag: 'Diagnostic en cours',
+      preparingTreat: 'Préparation du plan de traitement',
+      topDiagnoses: 'Principaux diagnostics',
+      mostLikely: 'Le plus probable',
+      second: '2ème possibilité',
+      third: '3ème possibilité',
+      selectDiag: 'Sélectionnez un diagnostic →',
+      newPhoto: '↩ Nouvelle photo',
+      getTreatment: 'Voir le traitement →',
+      tellMore: 'Dites-en plus au médecin',
+      voicePrompt: 'Quels traitements avez-vous disponibles? Combien d\'hectares sont touchés? Quel temps a-t-il fait récemment?',
+      micPlaceholder: 'Appuyez sur le micro pour parler, ou tapez ici…',
+      getTreatmentPlan: 'Obtenir le plan de traitement →',
+      backDiag: '← Retour au diagnostic',
+      treatmentPlan: 'Plan de traitement',
+      export: '↑ \u00a0Exporter le résumé',
+      askAnother: 'Poser une autre question',
+      newDiag: '↩ Nouveau diagnostic',
+      pastDiag: 'Diagnostics passés',
+      noPastDiag: 'Aucun diagnostic passé',
+      back: '← Retour',
+      history: 'HISTORIQUE',
+      severity: 'Sévérité',
+      sevLabels: ['', 'Légère', 'Légère–Modérée', 'Modérée', 'Modérée–Grave', 'Grave'],
+      captured: 'Capturée',
+      plant: 'Plante',
+      noContext: 'Ajoutez du contexte d\'abord',
+      noSession: 'Aucune session active — reprenez la photo',
+      reportCopied: 'Rapport copié dans le presse-papiers!',
+    },
+    hi: {
+      code: 'hi-IN', name: 'हिन्दी',
+      cameraLabel: 'प्रभावित पौधे पर कैमरा रखें',
+      cameraHint: 'रोगग्रस्त क्षेत्र को फ्रेम में रखें',
+      capture: '⬤ \u00a0तस्वीर लें',
+      or: 'या',
+      upload: '↑ \u00a0फ़ोटो अपलोड करें',
+      confirmPhoto: 'फ़ोटो की पुष्टि करें',
+      confirmHint: 'क्या प्रभावित क्षेत्र स्पष्ट दिख रहा है?',
+      retake: '↩ दोबारा लें',
+      analyze: 'विश्लेषण करें →',
+      analyzing: 'आपके पौधे का विश्लेषण हो रहा है…',
+      runningDiag: 'निदान चल रहा है',
+      preparingTreat: 'उपचार योजना तैयार हो रही है',
+      topDiagnoses: 'मुख्य निदान',
+      mostLikely: 'सबसे संभावित',
+      second: 'दूसरी संभावना',
+      third: 'तीसरी संभावना',
+      selectDiag: 'एक निदान चुनें →',
+      newPhoto: '↩ नई तस्वीर',
+      getTreatment: 'उपचार देखें →',
+      tellMore: 'डॉक्टर को और बताएं',
+      voicePrompt: 'आपके पास कौन से उपचार उपलब्ध हैं? कितने एकड़ प्रभावित हैं? हाल का मौसम कैसा रहा?',
+      micPlaceholder: 'माइक दबाकर बोलें, या यहाँ टाइप करें…',
+      getTreatmentPlan: 'उपचार योजना प्राप्त करें →',
+      backDiag: '← निदान पर वापस',
+      treatmentPlan: 'उपचार योजना',
+      export: '↑ \u00a0सारांश निर्यात करें',
+      askAnother: 'और प्रश्न पूछें',
+      newDiag: '↩ नया निदान',
+      pastDiag: 'पिछले निदान',
+      noPastDiag: 'अभी तक कोई निदान नहीं',
+      back: '← वापस',
+      history: 'इतिहास',
+      severity: 'गंभीरता',
+      sevLabels: ['', 'हल्की', 'हल्की–मध्यम', 'मध्यम', 'मध्यम–गंभीर', 'गंभीर'],
+      captured: 'कैप्चर की गई',
+      plant: 'पौधा',
+      noContext: 'पहले कुछ संदर्भ जोड़ें',
+      noSession: 'कोई सत्र नहीं — फ़ोटो फिर से लें',
+      reportCopied: 'रिपोर्ट क्लिपबोर्ड पर कॉपी हुई!',
+    },
+    sw: {
+      code: 'sw-KE', name: 'Kiswahili',
+      cameraLabel: 'Elekeza kamera kwenye mmea ulioathirika',
+      cameraHint: 'Weka eneo lenye ugonjwa ndani ya fremu',
+      capture: '⬤ \u00a0Piga picha',
+      or: 'au',
+      upload: '↑ \u00a0Pakia picha',
+      confirmPhoto: 'Thibitisha picha',
+      confirmHint: 'Je, eneo lililoathirika linaonekana wazi?',
+      retake: '↩ Piga tena',
+      analyze: 'Changanua →',
+      analyzing: 'Inachunguza mmea wako…',
+      runningDiag: 'Inafanya uchunguzi',
+      preparingTreat: 'Inaandaa mpango wa matibabu',
+      topDiagnoses: 'Magonjwa yanayowezekana',
+      mostLikely: 'Uwezekano mkubwa',
+      second: 'Uwezekano wa 2',
+      third: 'Uwezekano wa 3',
+      selectDiag: 'Chagua ugonjwa →',
+      newPhoto: '↩ Picha mpya',
+      getTreatment: 'Ona matibabu →',
+      tellMore: 'Mwambie daktari zaidi',
+      voicePrompt: 'Una dawa gani? Ekari ngapi zimeathirika? Hali ya hewa imekuwaje hivi karibuni?',
+      micPlaceholder: 'Bonyeza maikrofoni kusema, au andika hapa…',
+      getTreatmentPlan: 'Pata mpango wa matibabu →',
+      backDiag: '← Rudi kwa uchunguzi',
+      treatmentPlan: 'Mpango wa matibabu',
+      export: '↑ \u00a0Hamisha muhtasari',
+      askAnother: 'Uliza swali lingine',
+      newDiag: '↩ Uchunguzi mpya',
+      pastDiag: 'Uchunguzi uliopita',
+      noPastDiag: 'Hakuna uchunguzi uliopita',
+      back: '← Rudi',
+      history: 'HISTORIA',
+      severity: 'Ukali',
+      sevLabels: ['', 'Ndogo', 'Ndogo–Wastani', 'Wastani', 'Wastani–Kali', 'Kali'],
+      captured: 'Iliyopigwa',
+      plant: 'Mmea',
+      noContext: 'Ongeza muktadha kwanza',
+      noSession: 'Hakuna kikao — piga picha tena',
+      reportCopied: 'Ripoti imenakiliwa kwenye ubao wa kunakili!',
+    },
+    pt: {
+      code: 'pt-BR', name: 'Português',
+      cameraLabel: 'Aponte para a planta afetada',
+      cameraHint: 'Coloque a área doente dentro do enquadramento',
+      capture: '⬤ \u00a0Capturar',
+      or: 'ou',
+      upload: '↑ \u00a0Enviar imagem',
+      confirmPhoto: 'Confirmar foto',
+      confirmHint: 'A área afetada está claramente visível?',
+      retake: '↩ Repetir',
+      analyze: 'Analisar →',
+      analyzing: 'Analisando sua planta…',
+      runningDiag: 'Executando diagnóstico',
+      preparingTreat: 'Preparando plano de tratamento',
+      topDiagnoses: 'Principais diagnósticos',
+      mostLikely: 'Mais provável',
+      second: '2ª possibilidade',
+      third: '3ª possibilidade',
+      selectDiag: 'Selecione um diagnóstico →',
+      newPhoto: '↩ Nova foto',
+      getTreatment: 'Ver tratamento →',
+      tellMore: 'Conte mais ao médico',
+      voicePrompt: 'Quais tratamentos você tem disponíveis? Quantos hectares estão afetados? Como foi o clima recentemente?',
+      micPlaceholder: 'Toque no mic para falar, ou escreva aqui…',
+      getTreatmentPlan: 'Obter plano de tratamento →',
+      backDiag: '← Voltar ao diagnóstico',
+      treatmentPlan: 'Plano de tratamento',
+      export: '↑ \u00a0Exportar resumo',
+      askAnother: 'Fazer outra pergunta',
+      newDiag: '↩ Novo diagnóstico',
+      pastDiag: 'Diagnósticos anteriores',
+      noPastDiag: 'Nenhum diagnóstico anterior',
+      back: '← Voltar',
+      history: 'HISTÓRICO',
+      severity: 'Gravidade',
+      sevLabels: ['', 'Leve', 'Leve–Moderada', 'Moderada', 'Moderada–Grave', 'Grave'],
+      captured: 'Capturada',
+      plant: 'Planta',
+      noContext: 'Adicione contexto primeiro',
+      noSession: 'Sem sessão ativa — tire a foto novamente',
+      reportCopied: 'Relatório copiado para a área de transferência!',
+    }
+  };
+
+  function t(key) { return (LANGS[currentLang] || LANGS.en)[key] || LANGS.en[key] || key; }
+
+  function setLang(lang) {
+    currentLang = lang;
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    // Update voice recognition language
+    if (recognition) { recognition.lang = LANGS[lang].code; }
+    // Refresh all i18n elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (el.tagName === 'INPUT' && el.type !== 'button') el.placeholder = t(key);
+      else el.textContent = t(key);
+    });
+    // Update dynamic elements
+    document.getElementById('thinking-sub').textContent = t('runningDiag');
+    document.getElementById('transcript-box').placeholder = t('micPlaceholder');
+    // Update history button
+    document.querySelector('[onclick="showScreen(\'screen-history\')"]').textContent = t('history');
+  }
 
   // ── Severity ──────────────────────────────────────────────
   function parseSeverity(text) {
@@ -319,6 +612,8 @@
   const SEV_LABELS = ['', 'Mild', 'Mild–Moderate', 'Moderate', 'Moderate–Severe', 'Severe'];
   const SEV_COLORS = ['', 'var(--sprout)', 'var(--sprout)', 'var(--sun)', 'var(--warn)', 'var(--danger)'];
 
+  function getSevLabel(level) { return (t('sevLabels') || SEV_LABELS)[level] || SEV_LABELS[level]; }
+
   function renderSeverity(level) {
     if (!level) { document.getElementById('severity-row').style.display = 'none'; return; }
     currentSeverity = level;
@@ -328,7 +623,7 @@
       return `<div class="severity-pip ${active ? `active sev-${level}` : ''}"></div>`;
     }).join('');
     const txt = document.getElementById('severity-text');
-    txt.textContent = SEV_LABELS[level];
+    txt.textContent = getSevLabel(level);
     txt.style.color = SEV_COLORS[level];
     document.getElementById('severity-row').style.display = 'flex';
   }
@@ -353,7 +648,7 @@
     }
 
     list.innerHTML = history.map((entry, i) => {
-      const sev = entry.severity ? `<span class="history-badge" style="background:${SEV_COLORS[entry.severity]}22;color:${SEV_COLORS[entry.severity]};border:1px solid ${SEV_COLORS[entry.severity]}44">${SEV_LABELS[entry.severity]}</span>` : '';
+      const sev = entry.severity ? `<span class="history-badge" style="background:${SEV_COLORS[entry.severity]}22;color:${SEV_COLORS[entry.severity]};border:1px solid ${SEV_COLORS[entry.severity]}44">${getSevLabel(entry.severity)}</span>` : '';
       const date = new Date(entry.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
       return `
         <div class="history-card" onclick="loadHistoryEntry(${i})">
@@ -393,7 +688,7 @@
   // ── Share / export ────────────────────────────────────────
   function shareReport() {
     const disease = selectedDiagnosis || 'Unknown';
-    const sev = currentSeverity ? SEV_LABELS[currentSeverity] : 'Not assessed';
+    const sev = currentSeverity ? getSevLabel(currentSeverity) : 'Not assessed';
     const conf = currentDiagnoses.find(d => d.name === disease);
     const confidence = conf ? `${conf.confidence}%` : '';
     const treatEl = document.getElementById('treatment-card');
@@ -424,7 +719,7 @@
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text)
-      .then(() => toast('Report copied to clipboard!'))
+      .then(() => toast(t('reportCopied')))
       .catch(() => {
         // Final fallback: open in new window
         const w = window.open('', '_blank');
@@ -527,7 +822,7 @@
     diagnoses.forEach((d, i) => {
       const isPrimary = i === 0;
       const refImg = getDiseaseImage(d.name);
-      const rankLabels = ['Most likely', '2nd possibility', '3rd possibility'];
+      const rankLabels = [t('mostLikely'), t('second'), t('third')];
 
       const card = document.createElement('div');
       card.className = 'diag-card' + (isPrimary ? ' primary' : '');
@@ -620,11 +915,11 @@
   }
 
   function retakePhoto() { pendingBlob = null; showScreen('screen-camera'); }
-  function submitPhoto() { if (!pendingBlob) return; showThinking('Running diagnosis'); sendDiagnosis(pendingBlob); pendingBlob = null; }
+  function submitPhoto() { if (!pendingBlob) return; showThinking(t('runningDiag')); sendDiagnosis(pendingBlob); pendingBlob = null; }
 
   // ── API ───────────────────────────────────────────────────
   async function sendDiagnosis(blob) {
-    const form = new FormData(); form.append('file', blob, 'plant.jpg');
+    const form = new FormData(); form.append('file', blob, 'plant.jpg'); form.append('lang', currentLang);
     try {
       const res = await fetch(`${API}/diagnose`, { method: 'POST', body: form });
       const data = await res.json();
@@ -637,29 +932,20 @@
 
   async function getTreatment() {
     const userContext = document.getElementById('transcript-box').value.trim();
-    if (!userContext) { toast('Add some context first'); return; }
-    if (!sessionId) { toast('No active session — retake photo'); return; }
-    // Prepend the selected diagnosis to the message so the model focuses on it
+    if (!userContext) { toast(t('noContext')); return; }
+    if (!sessionId) { toast(t('noSession')); return; }
     const message = selectedDiagnosis
       ? `The farmer has confirmed the diagnosis is ${selectedDiagnosis}. Do not question this. Provide a numbered treatment plan for ${selectedDiagnosis} given this context: ${userContext}`
       : userContext;
-    showThinking('Preparing treatment plan');
+    showThinking(t('preparingTreat'));
     try {
-      const res = await fetch(`${API}/treatment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: sessionId, message }) });
+      const res = await fetch(`${API}/treatment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: sessionId, message, lang: currentLang }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Treatment failed');
       renderTreatment(data.treatment);
-      // Save to history
       if (selectedDiagnosis) {
         const topDiag = currentDiagnoses.find(d => d.name === selectedDiagnosis) || currentDiagnoses[0];
-        saveToHistory({
-          disease: selectedDiagnosis,
-          confidence: topDiag ? topDiag.confidence : 0,
-          severity: currentSeverity,
-          treatment: data.treatment,
-          imageUrl: currentImageUrl,
-          timestamp: Date.now()
-        });
+        saveToHistory({ disease: selectedDiagnosis, confidence: topDiag ? topDiag.confidence : 0, severity: currentSeverity, treatment: data.treatment, imageUrl: currentImageUrl, timestamp: Date.now() });
       }
       setStatus('PLAN READY'); showScreen('screen-treatment'); setDots(3);
     } catch (e) { toast(e.message); showScreen('screen-voice'); }
@@ -685,15 +971,10 @@
   function showThinking(sub) { document.getElementById('thinking-sub').textContent = sub; showScreen('screen-thinking'); }
   function selectDiagnosis(index, name) {
     selectedDiagnosis = name;
-    // Update card styles
-    document.querySelectorAll('.diag-card').forEach((c, i) => {
-      c.classList.toggle('selected', i === index);
-    });
-    // Enable button and update label
+    document.querySelectorAll('.diag-card').forEach((c, i) => c.classList.toggle('selected', i === index));
     const btn = document.getElementById('get-treatment-btn');
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.textContent = `Treat: ${name.length > 22 ? name.slice(0,22)+'…' : name} →`;
+    btn.disabled = false; btn.style.opacity = '1';
+    btn.textContent = `${t('getTreatment').replace('→','').trim()}: ${name.length > 18 ? name.slice(0,18)+'…' : name} →`;
   }
 
   function goToVoice() {
@@ -712,7 +993,7 @@
     document.getElementById('transcript-box').value = '';
     document.getElementById('severity-row').style.display = 'none';
     const btn = document.getElementById('get-treatment-btn');
-    btn.disabled = true; btn.style.opacity = '0.4'; btn.textContent = 'Select a diagnosis →';
+    btn.disabled = true; btn.style.opacity = '0.4'; btn.textContent = t('selectDiag');
     setStatus('READY'); setDots(1); showScreen('screen-camera');
   }
   function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3200); }

@@ -54,7 +54,7 @@ def build_system_message():
     }
 
 
-def diagnose(image: Image.Image) -> tuple[str, list]:
+def diagnose(image: Image.Image, lang: str = "English") -> tuple[str, list]:
     """
     Takes a PIL image, returns (diagnosis_text, conversation_history).
     conversation_history is passed back into get_treatment_plan.
@@ -67,7 +67,7 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
             "role": "user",
             "content": [
                 {"type": "image", "image": image},
-                {"type": "text", "text": "What disease, pest, or deficiency do you see on this plant? Give your diagnosis and confidence level."}
+                {"type": "text", "text": f"What disease, pest, or deficiency do you see on this plant? Give your diagnosis and confidence level. Respond entirely in {lang}."}
             ]
         }
     ]
@@ -107,7 +107,7 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
     return diagnosis, history
 
 
-def get_treatment_plan(history: list, farmer_message: str) -> tuple[str, list]:
+def get_treatment_plan(history: list, farmer_message: str, lang: str = "English") -> tuple[str, list]:
     """
     Takes existing conversation history and farmer's follow-up message.
     Returns (treatment_plan_text, updated_history).
