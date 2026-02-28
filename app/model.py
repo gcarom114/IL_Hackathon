@@ -1,13 +1,9 @@
-import os
-from pathlib import Path
-
 import torch
-from peft import PeftModel
-from PIL import Image
 from transformers import AutoProcessor, Gemma3nForConditionalGeneration
+from PIL import Image
+import os
 
 MODEL_ID = "google/gemma-3n-E4B-it"
-LORA_PATH = os.getenv("LORA_PATH")  # Optional: path to a LoRA adapter directory
 
 model = None
 processor = None
@@ -20,18 +16,8 @@ def load_model():
         MODEL_ID,
         device_map="auto",
         torch_dtype=torch.bfloat16,
-        local_files_only=bool(os.getenv("LOCAL_FILES_ONLY", "0") == "1"),
     ).eval()
     processor = AutoProcessor.from_pretrained(MODEL_ID)
-
-    if LORA_PATH and Path(LORA_PATH).exists():
-        print(f"Loading LoRA adapter from {LORA_PATH} ...")
-        model = PeftModel.from_pretrained(model, LORA_PATH)
-        # Keep unmerged for memory; merge here if you want a single checkpoint:
-        # model = model.merge_and_unload()
-        model.eval()
-        print("LoRA adapter loaded.")
-
     print("Model loaded.")
 
 
@@ -56,10 +42,6 @@ def build_system_message():
 
 
 def diagnose(image: Image.Image) -> tuple[str, list]:
-    """
-    Takes a PIL image, returns (diagnosis_text, conversation_history).
-    conversation_history is passed back into get_treatment_plan.
-    """
     model, processor = get_model()
 
     messages = [
@@ -79,7 +61,7 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
         tokenize=True,
         return_dict=True,
         return_tensors="pt"
-    ).to(model.device)
+    ).to(model.device).to(torch.bfloat16)
 
     input_len = inputs["input_ids"].shape[-1]
 
@@ -89,7 +71,6 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
     output = generation[0][input_len:]
     diagnosis = processor.decode(output, skip_special_tokens=True)
 
-    # Build history for follow-up turns
     history = [
         build_system_message(),
         {
@@ -109,10 +90,6 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
 
 
 def get_treatment_plan(history: list, farmer_message: str) -> tuple[str, list]:
-    """
-    Takes existing conversation history and farmer's follow-up message.
-    Returns (treatment_plan_text, updated_history).
-    """
     model, processor = get_model()
 
     history.append({
@@ -126,7 +103,7 @@ def get_treatment_plan(history: list, farmer_message: str) -> tuple[str, list]:
         tokenize=True,
         return_dict=True,
         return_tensors="pt"
-    ).to(model.device)
+    ).to(model.device).to(torch.bfloat16)
 
     input_len = inputs["input_ids"].shape[-1]
 
