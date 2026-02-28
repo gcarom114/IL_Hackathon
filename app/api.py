@@ -7,6 +7,7 @@ import uuid
 import json
 
 from model import diagnose, get_treatment_plan
+from typing import Dict, List
 
 app = FastAPI(title="Crop Doctor API")
 
@@ -37,9 +38,51 @@ class TreatmentResponse(BaseModel):
     treatment: str
 
 
+class GemmaRequest(BaseModel):
+    features: Dict[str, float]
+    notes: str = ""
+    top_k: int = 3
+
+
+class Hypothesis(BaseModel):
+    name: str
+    confidence: float
+    rationale: str = ""
+
+
+class GemmaResponse(BaseModel):
+    hypotheses: List[Hypothesis]
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+def rank_from_features(feats: Dict[str, float], notes: str, top_k: int = 3) -> List[Hypothesis]:
+    chlorosis = max(0.0, feats.get("yellowing", 0.0) * 1.5)
+    dryness = feats.get("brown_fraction", 0.0)
+    fungal = feats.get("dark_spot_fraction", 0.0)
+    chewing = feats.get("edge_contrast", 0.0)
+
+    candidates = [
+        ("Nitrogen deficiency (chlorosis)", min(1.0, chlorosis), "Yellowing relative to green baseline suggests chlorosis."),
+        ("Under-watering or heat scorch", min(1.0, dryness * 1.2), "Brown desiccated patches are consistent with water stress."),
+        ("Fungal leaf spot / early blight", min(1.0, fungal * 1.4), "Dark low-luminance spots indicate possible fungal lesions."),
+        ("Chewing pest damage", min(1.0, chewing * 1.1), "High edge contrast may come from irregular bite marks."),
+    ]
+
+    notes_lower = notes.lower()
+    boosted = []
+    for name, score, rationale in candidates:
+        if any(k in notes_lower for k in ["bug", "chew", "hole", "aphid"]) and "pest" in name:
+            score += 0.1
+        if "yellow" in notes_lower and "chlorosis" in name:
+            score += 0.05
+        boosted.append((name, min(score, 1.0), rationale))
+
+    ranked = sorted(boosted, key=lambda x: x[1], reverse=True)[:top_k]
+    return [Hypothesis(name=n, confidence=round(c, 3), rationale=r) for n, c, r in ranked]
 
 
 @app.post("/diagnose", response_model=DiagnosisResponse)
@@ -83,3 +126,14 @@ def clear_session(session_id: str):
     """Clear a session when done."""
     sessions.pop(session_id, None)
     return {"status": "cleared"}
+
+
+@app.post("/gemma3n", response_model=GemmaResponse)
+def gemma_endpoint(req: GemmaRequest):
+    """
+    Endpoint for the CLI Gemma3nAgent. Currently uses heuristic feature
+    ranking; swap in model-based scoring if you include images in the payload.
+    """
+    top_k = max(1, min(req.top_k, 5))
+    hyps = rank_from_features(req.features, req.notes, top_k=top_k)
+    return GemmaResponse(hypotheses=hyps)

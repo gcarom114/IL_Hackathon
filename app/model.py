@@ -1,9 +1,13 @@
-import torch
-from transformers import AutoProcessor, Gemma3nForConditionalGeneration
-from PIL import Image
 import os
+from pathlib import Path
+
+import torch
+from peft import PeftModel
+from PIL import Image
+from transformers import AutoProcessor, Gemma3nForConditionalGeneration
 
 MODEL_ID = "google/gemma-3n-E4B-it"
+LORA_PATH = os.getenv("LORA_PATH")  # Optional: path to a LoRA adapter directory
 
 model = None
 processor = None
@@ -16,8 +20,18 @@ def load_model():
         MODEL_ID,
         device_map="auto",
         torch_dtype=torch.bfloat16,
+        local_files_only=bool(os.getenv("LOCAL_FILES_ONLY", "0") == "1"),
     ).eval()
     processor = AutoProcessor.from_pretrained(MODEL_ID)
+
+    if LORA_PATH and Path(LORA_PATH).exists():
+        print(f"Loading LoRA adapter from {LORA_PATH} ...")
+        model = PeftModel.from_pretrained(model, LORA_PATH)
+        # Keep unmerged for memory; merge here if you want a single checkpoint:
+        # model = model.merge_and_unload()
+        model.eval()
+        print("LoRA adapter loaded.")
+
     print("Model loaded.")
 
 
