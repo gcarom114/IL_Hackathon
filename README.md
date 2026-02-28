@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🌱 Crop Doctor
 
 An on-device AI agent that diagnoses plant diseases from a photo, then takes voice input to generate a tailored treatment plan. Built with Gemma 3n — fully offline, no API costs, works in the field.
@@ -37,7 +36,7 @@ Go to https://huggingface.co/google/gemma-3n-E4B-it and click **Acknowledge lice
 ### 2. Clone and configure
 ```bash
 git clone <this-repo>
-cd crop-doctor
+cd IL_Hackathon
 cp .env.example .env
 # Edit .env and add your HuggingFace token
 ```
