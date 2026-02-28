@@ -1,20 +1,10 @@
-version: "3.9"
-
 services:
   crop-doctor:
     build: .
     ports:
       - "8000:8000"
     volumes:
-      - ./model_cache:/model_cache   # persists model download across rebuilds
-      - ./app:/app                   # hot reload during development
+      - ./model_cache:/model_cache
+      - ./app:/app
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
-    # Remove the 'deploy' block below if you don't have an NVIDIA GPU
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
