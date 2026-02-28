@@ -433,6 +433,26 @@
 
     #toast.show { transform: translateX(-50%) translateY(0); }
 
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--fog);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .upload-btn {
+      font-size: 12px;
+    }
     /* scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -469,6 +489,9 @@
     <canvas id="canvas"></canvas>
     <p class="camera-hint">Position the diseased area within the frame</p>
     <button class="btn-primary" id="snap-btn" onclick="snapPhoto()">⬤ &nbsp;Capture</button>
+    <div class="divider"><span>or</span></div>
+    <button class="btn-secondary upload-btn" onclick="document.getElementById('upload-input').click()">↑ &nbsp;Upload from device</button>
+    <input type="file" id="upload-input" accept="image/*" style="display:none" onchange="handleUpload(event)" />
   </div>
 
   <!-- SCREEN 2: Thinking -->
@@ -525,7 +548,25 @@
   let recognition = null;
   let isRecording = false;
 
-  // ── Camera setup ──────────────────────────────────────────
+  // ── Upload handler ───────────────────────────────────────
+  function handleUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('snap-preview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    sendDiagnosis(file);
+    showThinking('Running diagnosis');
+
+    // reset input so same file can be re-uploaded
+    event.target.value = '';
+  }
+
+  // ── Camera setup ──────────────────────────────────────────────
   async function startCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
