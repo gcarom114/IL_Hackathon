@@ -70,6 +70,7 @@ class PlantDataset(Dataset):
         prompt_inputs = self.processor.apply_chat_template(
             messages,
             add_generation_prompt=True,
+            tokenize=True,
             return_tensors="pt",
             return_dict=True,
         )
@@ -80,6 +81,8 @@ class PlantDataset(Dataset):
         ]
         model_inputs = self.processor.apply_chat_template(
             full_messages,
+            add_generation_prompt=False,
+            tokenize=True,
             return_tensors="pt",
             return_dict=True,
         )

@@ -6,5 +6,9 @@ services:
     volumes:
       - ./model_cache:/model_cache
       - ./app:/app
+      - ./lora-out:/lora-out
+      - ./lora-out-hf:/lora-out-hf
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+      - LORA_PATH=${LORA_PATH:-/lora-out}
+      - LOCAL_FILES_ONLY=1

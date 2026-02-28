@@ -13,3 +13,4 @@ huggingface_hub
 timm
 peft
 jinja2>=3.1.0
+unsloth>=0.3.0
