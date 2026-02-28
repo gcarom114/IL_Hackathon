@@ -1,7 +1,6 @@
 import torch
 from transformers import AutoProcessor, Gemma3nForConditionalGeneration
 from PIL import Image
-import os
 
 MODEL_ID = "google/gemma-3n-E4B-it"
 
@@ -29,21 +28,28 @@ def get_model():
 
 SYSTEM_PROMPT = """You are an expert agronomist and plant pathologist with decades of field experience.
 
-When shown a plant image, provide exactly 3 possible diagnoses ranked by likelihood. Use this exact format:
+When shown a plant image, provide exactly 3 possible diagnoses ranked by likelihood.
 
-DIAGNOSIS_1: [Disease Name] | [0-100]% confidence
-Severity: [mild / moderate / severe]
-[2-3 sentence description of symptoms and why you suspect this]
+CRITICAL FORMAT RULES — follow exactly:
+- The format markers DIAGNOSIS_1:, DIAGNOSIS_2:, DIAGNOSIS_3: and the pipe | and % symbol must always be written exactly as shown, in English, no matter what language the descriptions are in.
+- Translate the disease names, severity words, and descriptions into the requested language.
+- Do not translate or alter the markers DIAGNOSIS_1:, DIAGNOSIS_2:, DIAGNOSIS_3:, the | separator, or the % sign.
 
-DIAGNOSIS_2: [Disease Name] | [0-100]% confidence
-Severity: [mild / moderate / severe]
-[2-3 sentence description of symptoms and why you suspect this]
+Use this exact format:
 
-DIAGNOSIS_3: [Disease Name] | [0-100]% confidence
-Severity: [mild / moderate / severe]
-[2-3 sentence description of symptoms and why you suspect this]
+DIAGNOSIS_1: [Disease Name in target language] | [0-100]%
+Severity: [mild / moderate / severe — translated]
+[2-3 sentence description in target language]
 
-When the farmer confirms a diagnosis and asks for a treatment plan, ALWAYS accept their confirmed diagnosis without questioning it. Do not say they are wrong or suggest a different disease. Simply provide numbered actionable treatment steps for the confirmed disease, tailored to what the farmer has available.
+DIAGNOSIS_2: [Disease Name in target language] | [0-100]%
+Severity: [translated]
+[description in target language]
+
+DIAGNOSIS_3: [Disease Name in target language] | [0-100]%
+Severity: [translated]
+[description in target language]
+
+When the farmer confirms a diagnosis and asks for a treatment plan, ALWAYS accept their confirmed diagnosis without questioning it. Do not say they are wrong or suggest a different disease. Provide numbered actionable treatment steps in the same language as the request, tailored to what the farmer has available.
 Keep responses concise and practical — the farmer is in the field."""
 
 
@@ -55,11 +61,13 @@ def build_system_message():
 
 
 def diagnose(image: Image.Image, lang: str = "English") -> tuple[str, list]:
-    """
-    Takes a PIL image, returns (diagnosis_text, conversation_history).
-    conversation_history is passed back into get_treatment_plan.
-    """
     model, processor = get_model()
+
+    prompt = (
+        f"Analyze this plant image and provide exactly 3 diagnoses using the required DIAGNOSIS_1/2/3 format. "
+        f"Write all descriptions, disease names, and severity words in {lang}. "
+        f"Keep the format markers DIAGNOSIS_1:, DIAGNOSIS_2:, DIAGNOSIS_3:, the pipe |, and % exactly as shown."
+    )
 
     messages = [
         build_system_message(),
@@ -67,7 +75,7 @@ def diagnose(image: Image.Image, lang: str = "English") -> tuple[str, list]:
             "role": "user",
             "content": [
                 {"type": "image", "image": image},
-                {"type": "text", "text": f"What disease, pest, or deficiency do you see on this plant? Give your diagnosis and confidence level. Respond entirely in {lang}."}
+                {"type": "text", "text": prompt}
             ]
         }
     ]
@@ -83,19 +91,18 @@ def diagnose(image: Image.Image, lang: str = "English") -> tuple[str, list]:
     input_len = inputs["input_ids"].shape[-1]
 
     with torch.inference_mode():
-        generation = model.generate(**inputs, max_new_tokens=200, do_sample=False)
+        generation = model.generate(**inputs, max_new_tokens=300, do_sample=False)
 
     output = generation[0][input_len:]
     diagnosis = processor.decode(output, skip_special_tokens=True)
 
-    # Build history for follow-up turns
     history = [
         build_system_message(),
         {
             "role": "user",
             "content": [
                 {"type": "image", "image": image},
-                {"type": "text", "text": "What disease, pest, or deficiency do you see on this plant?"}
+                {"type": "text", "text": prompt}
             ]
         },
         {
@@ -108,19 +115,18 @@ def diagnose(image: Image.Image, lang: str = "English") -> tuple[str, list]:
 
 
 def get_treatment_plan(history: list, farmer_message: str, lang: str = "English") -> tuple[str, list]:
-    """
-    Takes existing conversation history and farmer's follow-up message.
-    Returns (treatment_plan_text, updated_history).
-    """
     model, processor = get_model()
 
-    history.append({
+    # Append lang instruction clearly so model always responds in right language
+    full_message = f"{farmer_message}\n\n[Respond entirely in {lang}. Use numbered steps.]"
+
+    updated_history = history + [{
         "role": "user",
-        "content": [{"type": "text", "text": farmer_message}]
-    })
+        "content": [{"type": "text", "text": full_message}]
+    }]
 
     inputs = processor.apply_chat_template(
-        history,
+        updated_history,
         add_generation_prompt=True,
         tokenize=True,
         return_dict=True,
@@ -135,9 +141,9 @@ def get_treatment_plan(history: list, farmer_message: str, lang: str = "English"
     output = generation[0][input_len:]
     response = processor.decode(output, skip_special_tokens=True)
 
-    history.append({
+    updated_history.append({
         "role": "assistant",
         "content": [{"type": "text", "text": response}]
     })
 
-    return response, history
+    return response, updated_history

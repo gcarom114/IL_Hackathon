@@ -29,9 +29,9 @@
     .screen.active { display: flex; }
 
     /* Camera */
-    #screen-camera { align-items: center; justify-content: space-between; padding: 0 24px 20px; gap: 12px; }
+    #screen-camera { align-items: center; justify-content: space-between; padding: 0 24px 20px; gap: 10px; }
     .camera-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--fog); letter-spacing: 2px; text-transform: uppercase; text-align: center; padding-top: 6px; }
-    .viewfinder { position: relative; width: 100%; flex: 1; background: var(--bark); border-radius: var(--radius); overflow: hidden; max-height: 52vh; }
+    .viewfinder { position: relative; width: 100%; flex: 1; background: var(--bark); border-radius: var(--radius); overflow: hidden; max-height: 48vh; }
     #video { width: 100%; height: 100%; object-fit: cover; display: block; }
     #canvas { display: none; }
     .viewfinder::before, .viewfinder::after { content: ''; position: absolute; width: 24px; height: 24px; z-index: 2; }
@@ -41,15 +41,25 @@
     .corner-bl { position: absolute; bottom: 12px; left: 12px; width: 24px; height: 24px; z-index: 2; border-bottom: 2px solid var(--sprout); border-left: 2px solid var(--sprout); }
     .scan-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--sprout), transparent); animation: scan 3s ease-in-out infinite; opacity: 0.6; z-index: 2; }
     @keyframes scan { 0% { top: 15%; } 50% { top: 85%; } 100% { top: 15%; } }
-    .camera-hint { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 14px; color: var(--fog); text-align: center; }
+    .camera-hint { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 13px; color: var(--fog); text-align: center; }
+
+    /* Language selector */
+    .lang-bar { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
+    .lang-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 4px 9px; border-radius: 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+    .lang-btn:hover { border-color: var(--fog); color: var(--cream); }
+    .lang-btn.active { border-color: var(--sprout); color: var(--sprout); background: rgba(122,184,122,0.08); }
+    .lang-flag { font-size: 13px; line-height: 1; }
 
     /* Buttons */
     .btn-primary { width: 100%; padding: 15px; background: var(--moss); border: 1px solid var(--leaf); color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: background 0.2s, transform 0.1s; }
     .btn-primary:hover { background: var(--leaf); } .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.4; cursor: default; }
     .btn-secondary { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
     .btn-secondary:hover { border-color: var(--fog); color: var(--cream); }
     .btn-danger { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(192,90,58,0.4); color: var(--danger); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
     .btn-danger:hover { border-color: var(--danger); background: rgba(192,90,58,0.1); }
+    .btn-share { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(200,168,75,0.3); color: var(--sun); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .btn-share:hover { border-color: var(--sun); background: rgba(200,168,75,0.08); }
     .btn-row { display: flex; gap: 10px; width: 100%; }
     .btn-row > * { flex: 1; }
     .divider { display: flex; align-items: center; gap: 12px; color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; width: 100%; }
@@ -70,52 +80,39 @@
     .thinking-text { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 22px; color: var(--cream); text-align: center; }
     .thinking-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--fog); letter-spacing: 1px; }
 
-    /* Diagnosis — side by side */
+    /* Diagnosis */
     #screen-diagnosis { padding: 16px 24px 20px; gap: 12px; overflow: hidden; }
     .diagnosis-layout { display: flex; gap: 16px; flex: 1; min-height: 0; overflow: hidden; }
     .diag-img-col { flex: 0 0 auto; width: 34%; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
     .diag-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
     .diag-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
     .diag-text-col { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; min-height: 0; padding-right: 2px; }
-
-    /* Diagnosis cards */
-    .diag-card {
-      background: var(--bark);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: var(--radius);
-      padding: 12px;
-      display: flex;
-      gap: 10px;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      flex-shrink: 0;
-    }
+    .diag-card { background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 12px; display: flex; gap: 10px; cursor: pointer; transition: border-color 0.2s; flex-shrink: 0; }
     .diag-card:hover { border-color: rgba(122,184,122,0.3); }
     .diag-card.primary { border-color: rgba(122,184,122,0.4); background: rgba(45,74,45,0.4); }
     .diag-card.selected { border-color: var(--sprout) !important; background: rgba(45,74,45,0.6) !important; box-shadow: 0 0 0 1px var(--sprout); }
-    .diag-card .select-indicator { display: none; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--fog); flex-shrink: 0; margin-top: 2px; transition: all 0.2s; }
-    .diag-card.selected .select-indicator { display: flex; border-color: var(--sprout); background: var(--sprout); background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%231a1410' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-size: 60%; background-repeat: no-repeat; background-position: center; }
-    .diag-card .select-indicator { display: flex; }
-
-    .diag-ref-img {
-      width: 52px; height: 52px; flex-shrink: 0;
-      border-radius: 3px; object-fit: cover;
-      background: var(--soil);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
+    .diag-card .select-indicator { display: flex; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--fog); flex-shrink: 0; margin-top: 2px; transition: all 0.2s; }
+    .diag-card.selected .select-indicator { border-color: var(--sprout); background: var(--sprout); background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%231a1410' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-size: 60%; background-repeat: no-repeat; background-position: center; }
+    .diag-ref-img { width: 52px; height: 52px; flex-shrink: 0; border-radius: 3px; object-fit: cover; background: var(--soil); border: 1px solid rgba(255,255,255,0.06); }
     .diag-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-
     .diag-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
     .diag-name { font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--cream); line-height: 1.2; }
     .diag-rank { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--fog); letter-spacing: 1px; flex-shrink: 0; }
-
     .conf-row { display: flex; align-items: center; gap: 8px; }
     .conf-bar-track { flex: 1; height: 4px; background: rgba(0,0,0,0.4); border-radius: 2px; overflow: hidden; }
     .conf-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
     .conf-pct { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; flex-shrink: 0; }
-
     .diag-desc { font-size: 11px; line-height: 1.55; color: var(--fog); }
+
+    /* Severity */
+    .severity-row { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .severity-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--fog); letter-spacing: 1.5px; text-transform: uppercase; }
+    .severity-pips { display: flex; gap: 3px; }
+    .severity-pip { width: 10px; height: 10px; border-radius: 2px; background: rgba(255,255,255,0.08); transition: background 0.3s; }
+    .severity-pip.active.sev-1, .severity-pip.active.sev-2 { background: var(--sprout); }
+    .severity-pip.active.sev-3 { background: var(--sun); }
+    .severity-pip.active.sev-4, .severity-pip.active.sev-5 { background: var(--danger); }
+    .severity-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1px; }
 
     /* Voice */
     #screen-voice { padding: 16px 24px 20px; gap: 14px; overflow-y: auto; }
@@ -129,13 +126,15 @@
     #transcript-box { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 12px; min-height: 65px; resize: none; outline: none; transition: border-color 0.2s; }
     #transcript-box:focus { border-color: var(--leaf); } #transcript-box::placeholder { color: var(--fog); }
 
-    /* Treatment — side by side */
+    /* Treatment */
     #screen-treatment { padding: 16px 24px 20px; gap: 12px; overflow: hidden; }
     .treatment-layout { display: flex; gap: 16px; flex: 1; min-height: 0; overflow: hidden; }
     .treat-img-col { flex: 0 0 auto; width: 30%; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
     .treat-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
     .treat-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
     .treat-text-col { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; min-height: 0; }
+    .treatment-header { flex-shrink: 0; background: rgba(45,74,45,0.3); border: 1px solid rgba(122,184,122,0.2); border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .treatment-disease-name { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--cream); }
     .treatment-card { background: var(--bark); border: 1px solid rgba(122,184,122,0.15); border-radius: var(--radius); padding: 14px; flex: 1; overflow-y: auto; }
     .treatment-steps { display: flex; flex-direction: column; gap: 10px; }
     .treatment-step { display: flex; gap: 12px; align-items: flex-start; }
@@ -143,37 +142,7 @@
     .step-text { font-size: 13px; line-height: 1.65; color: var(--cream); flex: 1; padding-top: 2px; }
     .treatment-prose { font-size: 13px; line-height: 1.7; color: var(--cream); margin-bottom: 10px; }
 
-    /* Language selector */
-    .lang-bar { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 0 4px; }
-    .lang-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 5px 10px; border-radius: 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
-    .lang-btn:hover { border-color: var(--fog); color: var(--cream); }
-    .lang-btn.active { border-color: var(--sprout); color: var(--sprout); background: rgba(122,184,122,0.08); }
-    .lang-flag { font-size: 14px; line-height: 1; }
-
-    /* Toast */
-    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--danger); color: white; padding: 10px 20px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: transform 0.3s; z-index: 1000; white-space: nowrap; }
-    #toast.show { transform: translateX(-50%) translateY(0); }
-    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 2px; }
-
-    /* Severity */
-    .severity-row { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .severity-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--fog); letter-spacing: 1.5px; text-transform: uppercase; }
-    .severity-pips { display: flex; gap: 3px; }
-    .severity-pip { width: 10px; height: 10px; border-radius: 2px; background: rgba(255,255,255,0.08); transition: background 0.3s; }
-    .severity-pip.active.sev-1, .severity-pip.active.sev-2 { background: var(--sprout); }
-    .severity-pip.active.sev-3 { background: var(--sun); }
-    .severity-pip.active.sev-4, .severity-pip.active.sev-5 { background: var(--danger); }
-    .severity-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1px; }
-
-    /* Treatment header */
-    .treatment-header { flex-shrink: 0; background: rgba(45,74,45,0.3); border: 1px solid rgba(122,184,122,0.2); border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
-    .treatment-disease-name { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--cream); }
-
-    /* Share button */
-    .btn-share { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(200,168,75,0.3); color: var(--sun); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
-    .btn-share:hover { border-color: var(--sun); background: rgba(200,168,75,0.08); }
-
-    /* History screen */
+    /* History */
     #screen-history { padding: 16px 24px 20px; gap: 12px; overflow: hidden; }
     .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
     .history-empty { flex: 1; display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-style: italic; font-size: 16px; color: var(--fog); }
@@ -184,6 +153,11 @@
     .history-disease { font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .history-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--fog); letter-spacing: 1px; }
     .history-badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 10px; letter-spacing: 1px; }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--danger); color: white; padding: 10px 20px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: transform 0.3s; z-index: 1000; white-space: nowrap; }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 2px; }
   </style>
 </head>
 <body>
@@ -195,7 +169,7 @@
       <span class="logo-sub">Field AI</span>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button onclick="showScreen('screen-history')" style="background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--fog);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:color 0.2s,border-color 0.2s" onmouseover="this.style.color='var(--cream)';this.style.borderColor='var(--fog)'" onmouseout="this.style.color='var(--fog)';this.style.borderColor='rgba(255,255,255,0.1)'">HISTORY</button>
+      <button id="history-btn" onclick="showScreen('screen-history')" style="background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--fog);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:color 0.2s,border-color 0.2s" onmouseover="this.style.color='var(--cream)';this.style.borderColor='var(--fog)'" onmouseout="this.style.color='var(--fog)';this.style.borderColor='rgba(255,255,255,0.1)'">HISTORY</button>
       <div class="status-pill" id="status-pill">READY</div>
     </div>
   </header>
@@ -208,7 +182,7 @@
 
   <!-- SCREEN 1: Camera -->
   <div class="screen active" id="screen-camera">
-    <p class="camera-label" data-i18n="cameraLabel">Point at affected plant</p>
+    <p class="camera-label" id="lbl-cameraLabel">Point at affected plant</p>
     <div class="viewfinder">
       <video id="video" autoplay playsinline muted></video>
       <div class="scan-line"></div>
@@ -216,36 +190,36 @@
       <div class="corner-bl"></div>
     </div>
     <canvas id="canvas"></canvas>
-    <div class="lang-bar" id="lang-bar">
-      <button class="lang-btn active" onclick="setLang('en')" data-lang="en"><span class="lang-flag">🇬🇧</span> EN</button>
-      <button class="lang-btn" onclick="setLang('es')" data-lang="es"><span class="lang-flag">🇪🇸</span> ES</button>
-      <button class="lang-btn" onclick="setLang('fr')" data-lang="fr"><span class="lang-flag">🇫🇷</span> FR</button>
-      <button class="lang-btn" onclick="setLang('hi')" data-lang="hi"><span class="lang-flag">🇮🇳</span> HI</button>
-      <button class="lang-btn" onclick="setLang('sw')" data-lang="sw"><span class="lang-flag">🇰🇪</span> SW</button>
-      <button class="lang-btn" onclick="setLang('pt')" data-lang="pt"><span class="lang-flag">🇧🇷</span> PT</button>
+    <div class="lang-bar">
+      <button class="lang-btn active" onclick="setLang('en')" data-lang="en"><span class="lang-flag">&#127468;&#127463;</span> EN</button>
+      <button class="lang-btn" onclick="setLang('es')" data-lang="es"><span class="lang-flag">&#127466;&#127480;</span> ES</button>
+      <button class="lang-btn" onclick="setLang('fr')" data-lang="fr"><span class="lang-flag">&#127467;&#127479;</span> FR</button>
+      <button class="lang-btn" onclick="setLang('hi')" data-lang="hi"><span class="lang-flag">&#127470;&#127475;</span> HI</button>
+      <button class="lang-btn" onclick="setLang('sw')" data-lang="sw"><span class="lang-flag">&#127472;&#127466;</span> SW</button>
+      <button class="lang-btn" onclick="setLang('pt')" data-lang="pt"><span class="lang-flag">&#127463;&#127479;</span> PT</button>
     </div>
-    <p class="camera-hint" data-i18n="cameraHint">Position the diseased area within the frame</p>
-    <button class="btn-primary" onclick="snapPhoto()" data-i18n="capture">⬤ &nbsp;Capture</button>
-    <div class="divider"><span data-i18n="or">or</span></div>
-    <button class="btn-secondary" onclick="document.getElementById('upload-input').click()" data-i18n="upload">↑ &nbsp;Upload from device</button>
+    <p class="camera-hint" id="lbl-cameraHint">Position the diseased area within the frame</p>
+    <button class="btn-primary" id="lbl-capture" onclick="snapPhoto()">&#9899; &nbsp;Capture</button>
+    <div class="divider"><span id="lbl-or">or</span></div>
+    <button class="btn-secondary" id="lbl-upload" onclick="document.getElementById('upload-input').click()">&#8593; &nbsp;Upload from device</button>
     <input type="file" id="upload-input" accept="image/*" style="display:none" onchange="handleUpload(event)" />
   </div>
 
   <!-- SCREEN 1b: Preview -->
   <div class="screen" id="screen-preview">
-    <p class="preview-label">Confirm photo</p>
+    <p class="preview-label" id="lbl-confirmPhoto">Confirm photo</p>
     <div class="preview-img-wrap"><img id="preview-img" src="" alt="preview" /></div>
-    <p class="preview-hint">Does this clearly show the affected area?</p>
+    <p class="preview-hint" id="lbl-confirmHint">Does this clearly show the affected area?</p>
     <div class="btn-row">
-      <button class="btn-danger" onclick="retakePhoto()">↩ Retake</button>
-      <button class="btn-primary" onclick="submitPhoto()">Analyze →</button>
+      <button class="btn-danger" id="lbl-retake" onclick="retakePhoto()">&#8617; Retake</button>
+      <button class="btn-primary" id="lbl-analyze" onclick="submitPhoto()">Analyze &#8594;</button>
     </div>
   </div>
 
   <!-- SCREEN 2: Thinking -->
   <div class="screen" id="screen-thinking">
     <div class="thinking-icon"></div>
-    <p class="thinking-text">Analyzing your plant…</p>
+    <p class="thinking-text" id="lbl-analyzing">Analyzing your plant&hellip;</p>
     <p class="thinking-sub" id="thinking-sub">Running diagnosis</p>
   </div>
 
@@ -253,63 +227,61 @@
   <div class="screen" id="screen-diagnosis">
     <div class="diagnosis-layout">
       <div class="diag-img-col">
-        <p class="section-label">Captured</p>
+        <p class="section-label" id="lbl-captured">Captured</p>
         <div class="diag-img-wrap"><img id="snap-preview" src="" alt="plant" /></div>
         <div class="severity-row" id="severity-row" style="display:none">
-          <span class="severity-label">Severity</span>
+          <span class="severity-label" id="lbl-severity">Severity</span>
           <div class="severity-pips" id="severity-pips"></div>
           <span class="severity-text" id="severity-text"></span>
         </div>
       </div>
-      <div class="diag-text-col" id="diag-text-col">
-        <!-- filled by JS -->
-      </div>
+      <div class="diag-text-col" id="diag-text-col"></div>
     </div>
     <div class="btn-row" style="flex-shrink:0">
-      <button class="btn-secondary" onclick="resetApp()">↩ New Photo</button>
-      <button class="btn-primary" id="get-treatment-btn" onclick="goToVoice()" disabled style="opacity:0.4">Select a diagnosis →</button>
+      <button class="btn-secondary" id="lbl-newPhoto" onclick="resetApp()">&#8617; New Photo</button>
+      <button class="btn-primary" id="get-treatment-btn" onclick="goToVoice()" disabled>Select a diagnosis &#8594;</button>
     </div>
   </div>
 
   <!-- SCREEN 4: Voice -->
   <div class="screen" id="screen-voice">
-    <p class="section-label">Tell the doctor more</p>
+    <p class="section-label" id="lbl-tellMore">Tell the doctor more</p>
     <div class="voice-area">
-      <p class="voice-prompt">What treatments do you have available? How many acres are affected? What's the recent weather been like?</p>
+      <p class="voice-prompt" id="lbl-voicePrompt">What treatments do you have available? How many acres are affected? What's the recent weather been like?</p>
       <button class="mic-btn" id="mic-btn" onclick="toggleVoice()">
-        <span class="mic-icon" id="mic-icon">🎙</span>
+        <span class="mic-icon" id="mic-icon">&#127897;</span>
       </button>
-      <textarea id="transcript-box" placeholder="Tap mic to speak, or type here…" rows="3"></textarea>
+      <textarea id="transcript-box" placeholder="Tap mic to speak, or type here&hellip;" rows="3"></textarea>
     </div>
-    <button class="btn-primary" onclick="getTreatment()">Get Treatment Plan →</button>
-    <button class="btn-secondary" onclick="showScreen('screen-diagnosis')">← Back to Diagnosis</button>
+    <button class="btn-primary" id="lbl-getTreatmentPlan" onclick="getTreatment()">Get Treatment Plan &#8594;</button>
+    <button class="btn-secondary" id="lbl-backDiag" onclick="showScreen('screen-diagnosis')">&#8592; Back to Diagnosis</button>
   </div>
 
   <!-- SCREEN 5: Treatment -->
   <div class="screen" id="screen-treatment">
     <div class="treatment-layout">
       <div class="treat-img-col">
-        <p class="section-label">Plant</p>
+        <p class="section-label" id="lbl-plant">Plant</p>
         <div class="treat-img-wrap"><img id="treatment-preview" src="" alt="plant" /></div>
       </div>
       <div class="treat-text-col">
-        <div class="treatment-header" id="treatment-header">
-          <p class="section-label">Treatment Plan</p>
+        <div class="treatment-header">
+          <p class="section-label" id="lbl-treatmentPlan">Treatment Plan</p>
           <p class="treatment-disease-name" id="treatment-disease-name"></p>
         </div>
         <div class="treatment-card" id="treatment-card"></div>
-        <button class="btn-share" onclick="shareReport()">↑ &nbsp;Export Summary</button>
-        <button class="btn-primary" onclick="goToVoice()">Ask Another Question</button>
-        <button class="btn-secondary" onclick="resetApp()">↩ New Diagnosis</button>
+        <button class="btn-share" id="lbl-export" onclick="shareReport()">&#8593; &nbsp;Export Summary</button>
+        <button class="btn-primary" id="lbl-askAnother" onclick="goToVoice()">Ask Another Question</button>
+        <button class="btn-secondary" id="lbl-newDiag" onclick="resetApp()">&#8617; New Diagnosis</button>
       </div>
     </div>
   </div>
 
   <!-- SCREEN 6: History -->
   <div class="screen" id="screen-history">
-    <p class="section-label">Past Diagnoses</p>
+    <p class="section-label" id="lbl-pastDiag">Past Diagnoses</p>
     <div class="history-list" id="history-list"></div>
-    <button class="btn-secondary" onclick="showScreen('screen-camera')">← Back</button>
+    <button class="btn-secondary" id="lbl-back" onclick="showScreen('screen-camera')">&#8592; Back</button>
   </div>
 
 </div>
@@ -324,304 +296,333 @@
   // ── Translations ──────────────────────────────────────────
   const LANGS = {
     en: {
-      code: 'en-US', name: 'English',
+      code: 'en-US',
       cameraLabel: 'Point at affected plant',
       cameraHint: 'Position the diseased area within the frame',
-      capture: '⬤ \u00a0Capture',
+      capture: '\u2B24\u00A0Capture',
       or: 'or',
-      upload: '↑ \u00a0Upload from device',
+      upload: '\u2191\u00A0Upload from device',
       confirmPhoto: 'Confirm photo',
       confirmHint: 'Does this clearly show the affected area?',
-      retake: '↩ Retake',
-      analyze: 'Analyze →',
-      analyzing: 'Analyzing your plant…',
+      retake: '\u21A9 Retake',
+      analyze: 'Analyze \u2192',
+      analyzing: 'Analyzing your plant\u2026',
       runningDiag: 'Running diagnosis',
       preparingTreat: 'Preparing treatment plan',
       topDiagnoses: 'Top Diagnoses',
       mostLikely: 'Most likely',
       second: '2nd possibility',
       third: '3rd possibility',
-      selectDiag: 'Select a diagnosis →',
-      newPhoto: '↩ New Photo',
-      getTreatment: 'Get Treatment →',
+      selectDiag: 'Select a diagnosis \u2192',
+      newPhoto: '\u21A9 New Photo',
+      getTreatment: 'Get Treatment',
       tellMore: 'Tell the doctor more',
-      voicePrompt: 'What treatments do you have available? How many acres are affected? What\'s the recent weather been like?',
-      micPlaceholder: 'Tap mic to speak, or type here…',
-      getTreatmentPlan: 'Get Treatment Plan →',
-      backDiag: '← Back to Diagnosis',
+      voicePrompt: "What treatments do you have available? How many acres are affected? What's the recent weather been like?",
+      micPlaceholder: 'Tap mic to speak, or type here\u2026',
+      getTreatmentPlan: 'Get Treatment Plan \u2192',
+      backDiag: '\u2190 Back to Diagnosis',
       treatmentPlan: 'Treatment Plan',
-      export: '↑ \u00a0Export Summary',
+      export: '\u2191\u00A0Export Summary',
       askAnother: 'Ask Another Question',
-      newDiag: '↩ New Diagnosis',
+      newDiag: '\u21A9 New Diagnosis',
       pastDiag: 'Past Diagnoses',
       noPastDiag: 'No past diagnoses yet',
-      back: '← Back',
+      back: '\u2190 Back',
       history: 'HISTORY',
       severity: 'Severity',
-      sevLabels: ['', 'Mild', 'Mild–Moderate', 'Moderate', 'Moderate–Severe', 'Severe'],
+      sevLabels: ['', 'Mild', 'Mild\u2013Moderate', 'Moderate', 'Moderate\u2013Severe', 'Severe'],
       captured: 'Captured',
       plant: 'Plant',
       noContext: 'Add some context first',
-      noSession: 'No active session — retake photo',
+      noSession: 'No active session \u2014 retake photo',
       reportCopied: 'Report copied to clipboard!',
     },
     es: {
-      code: 'es-ES', name: 'Español',
+      code: 'es-ES',
       cameraLabel: 'Apunta a la planta afectada',
-      cameraHint: 'Coloca el área enferma dentro del marco',
-      capture: '⬤ \u00a0Capturar',
+      cameraHint: 'Coloca el \u00E1rea enferma dentro del marco',
+      capture: '\u2B24\u00A0Capturar',
       or: 'o',
-      upload: '↑ \u00a0Subir imagen',
+      upload: '\u2191\u00A0Subir imagen',
       confirmPhoto: 'Confirmar foto',
-      confirmHint: '¿Se ve claramente el área afectada?',
-      retake: '↩ Repetir',
-      analyze: 'Analizar →',
-      analyzing: 'Analizando tu planta…',
-      runningDiag: 'Ejecutando diagnóstico',
+      confirmHint: '\u00BFSe ve claramente el \u00E1rea afectada?',
+      retake: '\u21A9 Repetir',
+      analyze: 'Analizar \u2192',
+      analyzing: 'Analizando tu planta\u2026',
+      runningDiag: 'Ejecutando diagn\u00F3stico',
       preparingTreat: 'Preparando plan de tratamiento',
-      topDiagnoses: 'Principales diagnósticos',
-      mostLikely: 'Más probable',
-      second: '2ª posibilidad',
-      third: '3ª posibilidad',
-      selectDiag: 'Selecciona un diagnóstico →',
-      newPhoto: '↩ Nueva foto',
-      getTreatment: 'Ver tratamiento →',
-      tellMore: 'Cuéntale más al doctor',
-      voicePrompt: '¿Qué tratamientos tienes disponibles? ¿Cuántas hectáreas están afectadas? ¿Cómo ha sido el clima últimamente?',
-      micPlaceholder: 'Toca el mic para hablar, o escribe aquí…',
-      getTreatmentPlan: 'Obtener plan de tratamiento →',
-      backDiag: '← Volver al diagnóstico',
+      topDiagnoses: 'Principales diagn\u00F3sticos',
+      mostLikely: 'M\u00E1s probable',
+      second: '2\u00AA posibilidad',
+      third: '3\u00AA posibilidad',
+      selectDiag: 'Selecciona un diagn\u00F3stico \u2192',
+      newPhoto: '\u21A9 Nueva foto',
+      getTreatment: 'Ver tratamiento',
+      tellMore: 'Cu\u00E9ntale m\u00E1s al doctor',
+      voicePrompt: '\u00BFQu\u00E9 tratamientos tienes disponibles? \u00BFCu\u00E1ntas hect\u00E1reas est\u00E1n afectadas? \u00BFC\u00F3mo ha sido el clima \u00FAltimamente?',
+      micPlaceholder: 'Toca el mic para hablar, o escribe aqu\u00ED\u2026',
+      getTreatmentPlan: 'Obtener plan de tratamiento \u2192',
+      backDiag: '\u2190 Volver al diagn\u00F3stico',
       treatmentPlan: 'Plan de tratamiento',
-      export: '↑ \u00a0Exportar resumen',
+      export: '\u2191\u00A0Exportar resumen',
       askAnother: 'Hacer otra pregunta',
-      newDiag: '↩ Nuevo diagnóstico',
-      pastDiag: 'Diagnósticos anteriores',
-      noPastDiag: 'Sin diagnósticos anteriores',
-      back: '← Volver',
+      newDiag: '\u21A9 Nuevo diagn\u00F3stico',
+      pastDiag: 'Diagn\u00F3sticos anteriores',
+      noPastDiag: 'Sin diagn\u00F3sticos anteriores',
+      back: '\u2190 Volver',
       history: 'HISTORIAL',
       severity: 'Gravedad',
-      sevLabels: ['', 'Leve', 'Leve–Moderada', 'Moderada', 'Moderada–Grave', 'Grave'],
+      sevLabels: ['', 'Leve', 'Leve\u2013Moderada', 'Moderada', 'Moderada\u2013Grave', 'Grave'],
       captured: 'Capturada',
       plant: 'Planta',
       noContext: 'Agrega algo de contexto primero',
-      noSession: 'Sin sesión activa — vuelve a tomar la foto',
-      reportCopied: '¡Reporte copiado al portapapeles!',
+      noSession: 'Sin sesi\u00F3n activa \u2014 vuelve a tomar la foto',
+      reportCopied: '\u00A1Reporte copiado al portapapeles!',
     },
     fr: {
-      code: 'fr-FR', name: 'Français',
-      cameraLabel: 'Pointez vers la plante affectée',
+      code: 'fr-FR',
+      cameraLabel: 'Pointez vers la plante affect\u00E9e',
       cameraHint: 'Placez la zone malade dans le cadre',
-      capture: '⬤ \u00a0Capturer',
+      capture: '\u2B24\u00A0Capturer',
       or: 'ou',
-      upload: '↑ \u00a0Téléverser une image',
+      upload: '\u2191\u00A0T\u00E9l\u00E9verser une image',
       confirmPhoto: 'Confirmer la photo',
-      confirmHint: 'La zone affectée est-elle bien visible?',
-      retake: '↩ Reprendre',
-      analyze: 'Analyser →',
-      analyzing: 'Analyse de votre plante…',
+      confirmHint: 'La zone affect\u00E9e est-elle bien visible?',
+      retake: '\u21A9 Reprendre',
+      analyze: 'Analyser \u2192',
+      analyzing: 'Analyse de votre plante\u2026',
       runningDiag: 'Diagnostic en cours',
-      preparingTreat: 'Préparation du plan de traitement',
+      preparingTreat: 'Pr\u00E9paration du plan de traitement',
       topDiagnoses: 'Principaux diagnostics',
       mostLikely: 'Le plus probable',
-      second: '2ème possibilité',
-      third: '3ème possibilité',
-      selectDiag: 'Sélectionnez un diagnostic →',
-      newPhoto: '↩ Nouvelle photo',
-      getTreatment: 'Voir le traitement →',
-      tellMore: 'Dites-en plus au médecin',
-      voicePrompt: 'Quels traitements avez-vous disponibles? Combien d\'hectares sont touchés? Quel temps a-t-il fait récemment?',
-      micPlaceholder: 'Appuyez sur le micro pour parler, ou tapez ici…',
-      getTreatmentPlan: 'Obtenir le plan de traitement →',
-      backDiag: '← Retour au diagnostic',
+      second: '2\u00E8me possibilit\u00E9',
+      third: '3\u00E8me possibilit\u00E9',
+      selectDiag: 'S\u00E9lectionnez un diagnostic \u2192',
+      newPhoto: '\u21A9 Nouvelle photo',
+      getTreatment: 'Voir le traitement',
+      tellMore: 'Dites-en plus au m\u00E9decin',
+      voicePrompt: "Quels traitements avez-vous disponibles? Combien d'hectares sont touch\u00E9s? Quel temps a-t-il fait r\u00E9cemment?",
+      micPlaceholder: 'Appuyez sur le micro pour parler, ou tapez ici\u2026',
+      getTreatmentPlan: 'Obtenir le plan de traitement \u2192',
+      backDiag: '\u2190 Retour au diagnostic',
       treatmentPlan: 'Plan de traitement',
-      export: '↑ \u00a0Exporter le résumé',
+      export: '\u2191\u00A0Exporter le r\u00E9sum\u00E9',
       askAnother: 'Poser une autre question',
-      newDiag: '↩ Nouveau diagnostic',
-      pastDiag: 'Diagnostics passés',
-      noPastDiag: 'Aucun diagnostic passé',
-      back: '← Retour',
+      newDiag: '\u21A9 Nouveau diagnostic',
+      pastDiag: 'Diagnostics pass\u00E9s',
+      noPastDiag: 'Aucun diagnostic pass\u00E9',
+      back: '\u2190 Retour',
       history: 'HISTORIQUE',
-      severity: 'Sévérité',
-      sevLabels: ['', 'Légère', 'Légère–Modérée', 'Modérée', 'Modérée–Grave', 'Grave'],
-      captured: 'Capturée',
+      severity: 'S\u00E9v\u00E9rit\u00E9',
+      sevLabels: ['', 'L\u00E9g\u00E8re', 'L\u00E9g\u00E8re\u2013Mod\u00E9r\u00E9e', 'Mod\u00E9r\u00E9e', 'Mod\u00E9r\u00E9e\u2013Grave', 'Grave'],
+      captured: 'Captur\u00E9e',
       plant: 'Plante',
-      noContext: 'Ajoutez du contexte d\'abord',
-      noSession: 'Aucune session active — reprenez la photo',
-      reportCopied: 'Rapport copié dans le presse-papiers!',
+      noContext: "Ajoutez du contexte d'abord",
+      noSession: 'Aucune session active \u2014 reprenez la photo',
+      reportCopied: 'Rapport copi\u00E9 dans le presse-papiers!',
     },
     hi: {
-      code: 'hi-IN', name: 'हिन्दी',
-      cameraLabel: 'प्रभावित पौधे पर कैमरा रखें',
-      cameraHint: 'रोगग्रस्त क्षेत्र को फ्रेम में रखें',
-      capture: '⬤ \u00a0तस्वीर लें',
-      or: 'या',
-      upload: '↑ \u00a0फ़ोटो अपलोड करें',
-      confirmPhoto: 'फ़ोटो की पुष्टि करें',
-      confirmHint: 'क्या प्रभावित क्षेत्र स्पष्ट दिख रहा है?',
-      retake: '↩ दोबारा लें',
-      analyze: 'विश्लेषण करें →',
-      analyzing: 'आपके पौधे का विश्लेषण हो रहा है…',
-      runningDiag: 'निदान चल रहा है',
-      preparingTreat: 'उपचार योजना तैयार हो रही है',
-      topDiagnoses: 'मुख्य निदान',
-      mostLikely: 'सबसे संभावित',
-      second: 'दूसरी संभावना',
-      third: 'तीसरी संभावना',
-      selectDiag: 'एक निदान चुनें →',
-      newPhoto: '↩ नई तस्वीर',
-      getTreatment: 'उपचार देखें →',
-      tellMore: 'डॉक्टर को और बताएं',
-      voicePrompt: 'आपके पास कौन से उपचार उपलब्ध हैं? कितने एकड़ प्रभावित हैं? हाल का मौसम कैसा रहा?',
-      micPlaceholder: 'माइक दबाकर बोलें, या यहाँ टाइप करें…',
-      getTreatmentPlan: 'उपचार योजना प्राप्त करें →',
-      backDiag: '← निदान पर वापस',
-      treatmentPlan: 'उपचार योजना',
-      export: '↑ \u00a0सारांश निर्यात करें',
-      askAnother: 'और प्रश्न पूछें',
-      newDiag: '↩ नया निदान',
-      pastDiag: 'पिछले निदान',
-      noPastDiag: 'अभी तक कोई निदान नहीं',
-      back: '← वापस',
-      history: 'इतिहास',
-      severity: 'गंभीरता',
-      sevLabels: ['', 'हल्की', 'हल्की–मध्यम', 'मध्यम', 'मध्यम–गंभीर', 'गंभीर'],
-      captured: 'कैप्चर की गई',
-      plant: 'पौधा',
-      noContext: 'पहले कुछ संदर्भ जोड़ें',
-      noSession: 'कोई सत्र नहीं — फ़ोटो फिर से लें',
-      reportCopied: 'रिपोर्ट क्लिपबोर्ड पर कॉपी हुई!',
+      code: 'hi-IN',
+      cameraLabel: '\u092A\u094D\u0930\u092D\u093E\u0935\u093F\u0924 \u092A\u094C\u0927\u0947 \u092A\u0930 \u0915\u0948\u092E\u0930\u093E \u0930\u0916\u0947\u0902',
+      cameraHint: '\u0930\u094B\u0917\u0917\u094D\u0930\u0938\u094D\u0924 \u0915\u094D\u0937\u0947\u0924\u094D\u0930 \u0915\u094B \u092B\u094D\u0930\u0947\u092E \u092E\u0947\u0902 \u0930\u0916\u0947\u0902',
+      capture: '\u2B24\u00A0\u0924\u0938\u094D\u200D\u200D\u0935\u0940\u0930 \u0932\u0947\u0902',
+      or: '\u092F\u093E',
+      upload: '\u2191\u00A0\u092B\u093C\u094B\u091F\u094B \u0905\u092A\u0932\u094B\u0921 \u0915\u0930\u0947\u0902',
+      confirmPhoto: '\u092B\u093C\u094B\u091F\u094B \u0915\u0940 \u092A\u0941\u0937\u094D\u091F\u093F \u0915\u0930\u0947\u0902',
+      confirmHint: '\u0915\u094D\u092F\u093E \u092A\u094D\u0930\u092D\u093E\u0935\u093F\u0924 \u0915\u094D\u0937\u0947\u0924\u094D\u0930 \u0938\u094D\u092A\u0937\u094D\u091F \u0926\u093F\u0916 \u0930\u0939\u093E \u0939\u0948?',
+      retake: '\u21A9 \u0926\u094B\u092C\u093E\u0930\u093E \u0932\u0947\u0902',
+      analyze: '\u0935\u093F\u0936\u094D\u0932\u0947\u0937\u0923 \u0915\u0930\u0947\u0902 \u2192',
+      analyzing: '\u0906\u092A\u0915\u0947 \u092A\u094C\u0927\u0947 \u0915\u093E \u0935\u093F\u0936\u094D\u0932\u0947\u0937\u0923 \u0939\u094B \u0930\u0939\u093E \u0939\u0948\u2026',
+      runningDiag: '\u0928\u093F\u0926\u093E\u0928 \u091A\u0932 \u0930\u0939\u093E \u0939\u0948',
+      preparingTreat: '\u0909\u092A\u091A\u093E\u0930 \u092F\u094B\u091C\u0928\u093E \u0924\u0948\u092F\u093E\u0930 \u0939\u094B \u0930\u0939\u0940 \u0939\u0948',
+      topDiagnoses: '\u092E\u0941\u0916\u094D\u092F \u0928\u093F\u0926\u093E\u0928',
+      mostLikely: '\u0938\u092C\u0938\u0947 \u0938\u0902\u092D\u093E\u0935\u093F\u0924',
+      second: '\u0926\u0942\u0938\u0930\u0940 \u0938\u0902\u092D\u093E\u0935\u0928\u093E',
+      third: '\u0924\u0940\u0938\u0930\u0940 \u0938\u0902\u092D\u093E\u0935\u0928\u093E',
+      selectDiag: '\u090F\u0915 \u0928\u093F\u0926\u093E\u0928 \u091A\u0941\u0928\u0947\u0902 \u2192',
+      newPhoto: '\u21A9 \u0928\u0908 \u0924\u0938\u094D\u0935\u0940\u0930',
+      getTreatment: '\u0909\u092A\u091A\u093E\u0930 \u0926\u0947\u0916\u0947\u0902',
+      tellMore: '\u0921\u0949\u0915\u094D\u091F\u0930 \u0915\u094B \u0914\u0930 \u092C\u0924\u093E\u090F\u0902',
+      voicePrompt: '\u0906\u092A\u0915\u0947 \u092A\u093E\u0938 \u0915\u094C\u0928 \u0938\u0947 \u0909\u092A\u091A\u093E\u0930 \u0909\u092A\u0932\u092C\u094D\u0927 \u0939\u0948\u0902? \u0915\u093F\u0924\u0928\u0947 \u090F\u0915\u0921\u093C \u092A\u094D\u0930\u092D\u093E\u0935\u093F\u0924 \u0939\u0948\u0902? \u0939\u093E\u0932 \u0915\u093E \u092E\u094C\u0938\u092E \u0915\u0948\u0938\u093E \u0930\u0939\u093E?',
+      micPlaceholder: '\u092E\u093E\u0907\u0915 \u0926\u092C\u093E\u0915\u0930 \u092C\u094B\u0932\u0947\u0902, \u092F\u093E \u092F\u0939\u093E\u0901 \u091F\u093E\u0907\u092A \u0915\u0930\u0947\u0902\u2026',
+      getTreatmentPlan: '\u0909\u092A\u091A\u093E\u0930 \u092F\u094B\u091C\u0928\u093E \u092A\u094D\u0930\u093E\u092A\u094D\u0924 \u0915\u0930\u0947\u0902 \u2192',
+      backDiag: '\u2190 \u0928\u093F\u0926\u093E\u0928 \u092A\u0930 \u0935\u093E\u092A\u0938',
+      treatmentPlan: '\u0909\u092A\u091A\u093E\u0930 \u092F\u094B\u091C\u0928\u093E',
+      export: '\u2191\u00A0\u0938\u093E\u0930\u093E\u0902\u0936 \u0928\u093F\u0930\u094D\u092F\u093E\u0924 \u0915\u0930\u0947\u0902',
+      askAnother: '\u0914\u0930 \u092A\u094D\u0930\u0936\u094D\u0928 \u092A\u0942\u091B\u0947\u0902',
+      newDiag: '\u21A9 \u0928\u092F\u093E \u0928\u093F\u0926\u093E\u0928',
+      pastDiag: '\u092A\u093F\u091B\u0932\u0947 \u0928\u093F\u0926\u093E\u0928',
+      noPastDiag: '\u0905\u092D\u0940 \u0924\u0915 \u0915\u094B\u0908 \u0928\u093F\u0926\u093E\u0928 \u0928\u0939\u0940\u0902',
+      back: '\u2190 \u0935\u093E\u092A\u0938',
+      history: '\u0907\u0924\u093F\u0939\u093E\u0938',
+      severity: '\u0917\u0902\u092D\u0940\u0930\u0924\u093E',
+      sevLabels: ['', '\u0939\u0932\u094D\u0915\u0940', '\u0939\u0932\u094D\u0915\u0940\u2013\u092E\u0927\u094D\u092F\u092E', '\u092E\u0927\u094D\u092F\u092E', '\u092E\u0927\u094D\u092F\u092E\u2013\u0917\u0902\u092D\u0940\u0930', '\u0917\u0902\u092D\u0940\u0930'],
+      captured: '\u0915\u0948\u092A\u094D\u091A\u0930 \u0915\u0940 \u0917\u0908',
+      plant: '\u092A\u094C\u0927\u093E',
+      noContext: '\u092A\u0939\u0932\u0947 \u0915\u0941\u091B \u0938\u0902\u0926\u0930\u094D\u092D \u091C\u094B\u0921\u093C\u0947\u0902',
+      noSession: '\u0915\u094B\u0908 \u0938\u0924\u094D\u0930 \u0928\u0939\u0940\u0902 \u2014 \u092B\u093C\u094B\u091F\u094B \u092B\u093F\u0930 \u0938\u0947 \u0932\u0947\u0902',
+      reportCopied: '\u0930\u093F\u092A\u094B\u0930\u094D\u091F \u0915\u094D\u0932\u093F\u092A\u092C\u094B\u0930\u094D\u0921 \u092A\u0930 \u0915\u0949\u092A\u0940 \u0939\u0941\u0908!',
     },
     sw: {
-      code: 'sw-KE', name: 'Kiswahili',
+      code: 'sw-KE',
       cameraLabel: 'Elekeza kamera kwenye mmea ulioathirika',
       cameraHint: 'Weka eneo lenye ugonjwa ndani ya fremu',
-      capture: '⬤ \u00a0Piga picha',
+      capture: '\u2B24\u00A0Piga picha',
       or: 'au',
-      upload: '↑ \u00a0Pakia picha',
+      upload: '\u2191\u00A0Pakia picha',
       confirmPhoto: 'Thibitisha picha',
       confirmHint: 'Je, eneo lililoathirika linaonekana wazi?',
-      retake: '↩ Piga tena',
-      analyze: 'Changanua →',
-      analyzing: 'Inachunguza mmea wako…',
+      retake: '\u21A9 Piga tena',
+      analyze: 'Changanua \u2192',
+      analyzing: 'Inachunguza mmea wako\u2026',
       runningDiag: 'Inafanya uchunguzi',
       preparingTreat: 'Inaandaa mpango wa matibabu',
       topDiagnoses: 'Magonjwa yanayowezekana',
       mostLikely: 'Uwezekano mkubwa',
       second: 'Uwezekano wa 2',
       third: 'Uwezekano wa 3',
-      selectDiag: 'Chagua ugonjwa →',
-      newPhoto: '↩ Picha mpya',
-      getTreatment: 'Ona matibabu →',
+      selectDiag: 'Chagua ugonjwa \u2192',
+      newPhoto: '\u21A9 Picha mpya',
+      getTreatment: 'Ona matibabu',
       tellMore: 'Mwambie daktari zaidi',
       voicePrompt: 'Una dawa gani? Ekari ngapi zimeathirika? Hali ya hewa imekuwaje hivi karibuni?',
-      micPlaceholder: 'Bonyeza maikrofoni kusema, au andika hapa…',
-      getTreatmentPlan: 'Pata mpango wa matibabu →',
-      backDiag: '← Rudi kwa uchunguzi',
+      micPlaceholder: 'Bonyeza maikrofoni kusema, au andika hapa\u2026',
+      getTreatmentPlan: 'Pata mpango wa matibabu \u2192',
+      backDiag: '\u2190 Rudi kwa uchunguzi',
       treatmentPlan: 'Mpango wa matibabu',
-      export: '↑ \u00a0Hamisha muhtasari',
+      export: '\u2191\u00A0Hamisha muhtasari',
       askAnother: 'Uliza swali lingine',
-      newDiag: '↩ Uchunguzi mpya',
+      newDiag: '\u21A9 Uchunguzi mpya',
       pastDiag: 'Uchunguzi uliopita',
       noPastDiag: 'Hakuna uchunguzi uliopita',
-      back: '← Rudi',
+      back: '\u2190 Rudi',
       history: 'HISTORIA',
       severity: 'Ukali',
-      sevLabels: ['', 'Ndogo', 'Ndogo–Wastani', 'Wastani', 'Wastani–Kali', 'Kali'],
+      sevLabels: ['', 'Ndogo', 'Ndogo\u2013Wastani', 'Wastani', 'Wastani\u2013Kali', 'Kali'],
       captured: 'Iliyopigwa',
       plant: 'Mmea',
       noContext: 'Ongeza muktadha kwanza',
-      noSession: 'Hakuna kikao — piga picha tena',
-      reportCopied: 'Ripoti imenakiliwa kwenye ubao wa kunakili!',
+      noSession: 'Hakuna kikao \u2014 piga picha tena',
+      reportCopied: 'Ripoti imenakiliwa!',
     },
     pt: {
-      code: 'pt-BR', name: 'Português',
+      code: 'pt-BR',
       cameraLabel: 'Aponte para a planta afetada',
-      cameraHint: 'Coloque a área doente dentro do enquadramento',
-      capture: '⬤ \u00a0Capturar',
+      cameraHint: 'Coloque a \u00E1rea doente dentro do enquadramento',
+      capture: '\u2B24\u00A0Capturar',
       or: 'ou',
-      upload: '↑ \u00a0Enviar imagem',
+      upload: '\u2191\u00A0Enviar imagem',
       confirmPhoto: 'Confirmar foto',
-      confirmHint: 'A área afetada está claramente visível?',
-      retake: '↩ Repetir',
-      analyze: 'Analisar →',
-      analyzing: 'Analisando sua planta…',
-      runningDiag: 'Executando diagnóstico',
+      confirmHint: 'A \u00E1rea afetada est\u00E1 claramente vis\u00EDvel?',
+      retake: '\u21A9 Repetir',
+      analyze: 'Analisar \u2192',
+      analyzing: 'Analisando sua planta\u2026',
+      runningDiag: 'Executando diagn\u00F3stico',
       preparingTreat: 'Preparando plano de tratamento',
-      topDiagnoses: 'Principais diagnósticos',
-      mostLikely: 'Mais provável',
-      second: '2ª possibilidade',
-      third: '3ª possibilidade',
-      selectDiag: 'Selecione um diagnóstico →',
-      newPhoto: '↩ Nova foto',
-      getTreatment: 'Ver tratamento →',
-      tellMore: 'Conte mais ao médico',
-      voicePrompt: 'Quais tratamentos você tem disponíveis? Quantos hectares estão afetados? Como foi o clima recentemente?',
-      micPlaceholder: 'Toque no mic para falar, ou escreva aqui…',
-      getTreatmentPlan: 'Obter plano de tratamento →',
-      backDiag: '← Voltar ao diagnóstico',
+      topDiagnoses: 'Principais diagn\u00F3sticos',
+      mostLikely: 'Mais prov\u00E1vel',
+      second: '2\u00AA possibilidade',
+      third: '3\u00AA possibilidade',
+      selectDiag: 'Selecione um diagn\u00F3stico \u2192',
+      newPhoto: '\u21A9 Nova foto',
+      getTreatment: 'Ver tratamento',
+      tellMore: 'Conte mais ao m\u00E9dico',
+      voicePrompt: 'Quais tratamentos voc\u00EA tem dispon\u00EDveis? Quantos hectares est\u00E3o afetados? Como foi o clima recentemente?',
+      micPlaceholder: 'Toque no mic para falar, ou escreva aqui\u2026',
+      getTreatmentPlan: 'Obter plano de tratamento \u2192',
+      backDiag: '\u2190 Voltar ao diagn\u00F3stico',
       treatmentPlan: 'Plano de tratamento',
-      export: '↑ \u00a0Exportar resumo',
+      export: '\u2191\u00A0Exportar resumo',
       askAnother: 'Fazer outra pergunta',
-      newDiag: '↩ Novo diagnóstico',
-      pastDiag: 'Diagnósticos anteriores',
-      noPastDiag: 'Nenhum diagnóstico anterior',
-      back: '← Voltar',
-      history: 'HISTÓRICO',
+      newDiag: '\u21A9 Novo diagn\u00F3stico',
+      pastDiag: 'Diagn\u00F3sticos anteriores',
+      noPastDiag: 'Nenhum diagn\u00F3stico anterior',
+      back: '\u2190 Voltar',
+      history: 'HIST\u00D3RICO',
       severity: 'Gravidade',
-      sevLabels: ['', 'Leve', 'Leve–Moderada', 'Moderada', 'Moderada–Grave', 'Grave'],
+      sevLabels: ['', 'Leve', 'Leve\u2013Moderada', 'Moderada', 'Moderada\u2013Grave', 'Grave'],
       captured: 'Capturada',
       plant: 'Planta',
       noContext: 'Adicione contexto primeiro',
-      noSession: 'Sem sessão ativa — tire a foto novamente',
-      reportCopied: 'Relatório copiado para a área de transferência!',
+      noSession: 'Sem sess\u00E3o ativa \u2014 tire a foto novamente',
+      reportCopied: 'Relat\u00F3rio copiado!',
     }
   };
 
-  function t(key) { return (LANGS[currentLang] || LANGS.en)[key] || LANGS.en[key] || key; }
+  function t(key) { return (LANGS[currentLang] || LANGS.en)[key] ?? LANGS.en[key] ?? key; }
+
+  // All element-id → translation-key mappings
+  const I18N_MAP = {
+    'lbl-cameraLabel': 'cameraLabel', 'lbl-cameraHint': 'cameraHint',
+    'lbl-capture': 'capture', 'lbl-or': 'or', 'lbl-upload': 'upload',
+    'lbl-confirmPhoto': 'confirmPhoto', 'lbl-confirmHint': 'confirmHint',
+    'lbl-retake': 'retake', 'lbl-analyze': 'analyze',
+    'lbl-analyzing': 'analyzing',
+    'lbl-captured': 'captured', 'lbl-severity': 'severity',
+    'lbl-newPhoto': 'newPhoto',
+    'lbl-tellMore': 'tellMore', 'lbl-voicePrompt': 'voicePrompt',
+    'lbl-getTreatmentPlan': 'getTreatmentPlan', 'lbl-backDiag': 'backDiag',
+    'lbl-plant': 'plant', 'lbl-treatmentPlan': 'treatmentPlan',
+    'lbl-export': 'export', 'lbl-askAnother': 'askAnother',
+    'lbl-newDiag': 'newDiag', 'lbl-pastDiag': 'pastDiag',
+    'lbl-back': 'back', 'history-btn': 'history',
+  };
+
+  function applyTranslations() {
+    for (const [id, key] of Object.entries(I18N_MAP)) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = t(key);
+    }
+    document.getElementById('transcript-box').placeholder = t('micPlaceholder');
+    // Update get-treatment-btn label depending on state
+    const btn = document.getElementById('get-treatment-btn');
+    if (btn) {
+      if (btn.disabled) {
+        btn.textContent = t('selectDiag');
+      } else if (selectedDiagnosis) {
+        const short = selectedDiagnosis.length > 18 ? selectedDiagnosis.slice(0,18)+'\u2026' : selectedDiagnosis;
+        btn.textContent = t('getTreatment') + ': ' + short + ' \u2192';
+      }
+    }
+    // Re-render severity if visible
+    if (currentSeverity) renderSeverity(currentSeverity);
+    // Re-render top diagnoses section label
+    const hdr = document.querySelector('#diag-text-col .section-label');
+    if (hdr) hdr.textContent = t('topDiagnoses');
+  }
 
   function setLang(lang) {
     currentLang = lang;
-    // Update active button
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-    // Update voice recognition language
-    if (recognition) { recognition.lang = LANGS[lang].code; }
-    // Refresh all i18n elements
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.dataset.i18n;
-      if (el.tagName === 'INPUT' && el.type !== 'button') el.placeholder = t(key);
-      else el.textContent = t(key);
-    });
-    // Update dynamic elements
-    document.getElementById('thinking-sub').textContent = t('runningDiag');
-    document.getElementById('transcript-box').placeholder = t('micPlaceholder');
-    // Update history button
-    document.querySelector('[onclick="showScreen(\'screen-history\')"]').textContent = t('history');
+    if (recognition) recognition.lang = LANGS[lang].code;
+    applyTranslations();
   }
 
   // ── Severity ──────────────────────────────────────────────
+  const SEV_COLORS = ['', 'var(--sprout)', 'var(--sprout)', 'var(--sun)', 'var(--warn)', 'var(--danger)'];
+
   function parseSeverity(text) {
-    const lower = text.toLowerCase();
-    if (/severe|critical|advanced|extensive|widespread|serious/i.test(lower)) return 5;
-    if (/moderate.{0,20}severe|significant|heavy/i.test(lower)) return 4;
-    if (/moderate|medium|notable/i.test(lower)) return 3;
-    if (/mild.{0,20}moderate|early.{0,20}stage|developing/i.test(lower)) return 2;
-    if (/mild|minor|slight|early|minimal|low/i.test(lower)) return 1;
+    const lo = text.toLowerCase();
+    if (/severe|critical|advanced|extensive|grave|sévère|kali|गंभीर/i.test(lo)) return 5;
+    if (/moderate.{0,15}severe|significant|heavy|modérée.{0,10}grave|moderada.{0,10}grave/i.test(lo)) return 4;
+    if (/\bmoderate\b|modéré|moderada|wastani|मध्यम/i.test(lo)) return 3;
+    if (/mild.{0,15}moderate|légère.{0,10}modérée|leve.{0,10}moder/i.test(lo)) return 2;
+    if (/\bmild\b|minor|slight|\nearly\b|minimal|léger|leve|ndogo|हल्की/i.test(lo)) return 1;
     return null;
   }
 
-  const SEV_LABELS = ['', 'Mild', 'Mild–Moderate', 'Moderate', 'Moderate–Severe', 'Severe'];
-  const SEV_COLORS = ['', 'var(--sprout)', 'var(--sprout)', 'var(--sun)', 'var(--warn)', 'var(--danger)'];
-
-  function getSevLabel(level) { return (t('sevLabels') || SEV_LABELS)[level] || SEV_LABELS[level]; }
+  function getSevLabel(level) {
+    const arr = t('sevLabels');
+    return Array.isArray(arr) ? (arr[level] || '') : '';
+  }
 
   function renderSeverity(level) {
     if (!level) { document.getElementById('severity-row').style.display = 'none'; return; }
     currentSeverity = level;
     const pips = document.getElementById('severity-pips');
-    pips.innerHTML = Array.from({length: 5}, (_, i) => {
-      const active = i < level;
-      return `<div class="severity-pip ${active ? `active sev-${level}` : ''}"></div>`;
-    }).join('');
+    pips.innerHTML = Array.from({length:5}, (_, i) =>
+      `<div class="severity-pip ${i<level?`active sev-${level}`:''}"></div>`
+    ).join('');
     const txt = document.getElementById('severity-text');
     txt.textContent = getSevLabel(level);
     txt.style.color = SEV_COLORS[level];
@@ -631,112 +632,77 @@
   // ── History ───────────────────────────────────────────────
   function saveToHistory(entry) {
     try {
-      const history = JSON.parse(localStorage.getItem('cropDoctorHistory') || '[]');
-      history.unshift(entry);
-      localStorage.setItem('cropDoctorHistory', JSON.stringify(history.slice(0, 20)));
+      const h = JSON.parse(localStorage.getItem('cropDoctorHistory')||'[]');
+      h.unshift(entry);
+      localStorage.setItem('cropDoctorHistory', JSON.stringify(h.slice(0,20)));
     } catch(e) {}
   }
 
   function renderHistory() {
     const list = document.getElementById('history-list');
-    let history = [];
-    try { history = JSON.parse(localStorage.getItem('cropDoctorHistory') || '[]'); } catch(e) {}
-
-    if (!history.length) {
-      list.innerHTML = '<p class="history-empty">No past diagnoses yet</p>';
-      return;
-    }
-
-    list.innerHTML = history.map((entry, i) => {
-      const sev = entry.severity ? `<span class="history-badge" style="background:${SEV_COLORS[entry.severity]}22;color:${SEV_COLORS[entry.severity]};border:1px solid ${SEV_COLORS[entry.severity]}44">${getSevLabel(entry.severity)}</span>` : '';
-      const date = new Date(entry.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-      return `
-        <div class="history-card" onclick="loadHistoryEntry(${i})">
-          ${entry.imageUrl ? `<img class="history-thumb" src="${entry.imageUrl}" onerror="this.style.display='none'" />` : ''}
-          <div class="history-body">
-            <p class="history-disease">${esc(entry.disease)}</p>
-            <p class="history-meta">${date} &nbsp;·&nbsp; ${entry.confidence}% confidence</p>
-            ${sev}
-          </div>
-        </div>`;
+    let h = [];
+    try { h = JSON.parse(localStorage.getItem('cropDoctorHistory')||'[]'); } catch(e) {}
+    if (!h.length) { list.innerHTML = `<p class="history-empty">${esc(t('noPastDiag'))}</p>`; return; }
+    list.innerHTML = h.map((entry, i) => {
+      const sev = entry.severity
+        ? `<span class="history-badge" style="background:${SEV_COLORS[entry.severity]}22;color:${SEV_COLORS[entry.severity]};border:1px solid ${SEV_COLORS[entry.severity]}44">${getSevLabel(entry.severity)}</span>`
+        : '';
+      const date = new Date(entry.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      return `<div class="history-card" onclick="loadHistoryEntry(${i})">
+        ${entry.imageUrl?`<img class="history-thumb" src="${entry.imageUrl}" onerror="this.style.display='none'" />`:''}
+        <div class="history-body">
+          <p class="history-disease">${esc(entry.disease)}</p>
+          <p class="history-meta">${date} &middot; ${entry.confidence}%</p>
+          ${sev}
+        </div>
+      </div>`;
     }).join('');
   }
 
   function loadHistoryEntry(index) {
     try {
-      const history = JSON.parse(localStorage.getItem('cropDoctorHistory') || '[]');
-      const entry = history[index];
-      if (!entry) return;
-      // Restore state and jump to treatment if available
+      const h = JSON.parse(localStorage.getItem('cropDoctorHistory')||'[]');
+      const entry = h[index]; if (!entry) return;
       selectedDiagnosis = entry.disease;
       if (entry.imageUrl) {
-        document.getElementById('snap-preview').src = entry.imageUrl;
-        document.getElementById('treatment-preview').src = entry.imageUrl;
+        ['snap-preview','treatment-preview'].forEach(id => document.getElementById(id).src = entry.imageUrl);
         currentImageUrl = entry.imageUrl;
       }
       if (entry.treatment) {
         document.getElementById('treatment-disease-name').textContent = entry.disease;
         renderTreatment(entry.treatment);
-        showScreen('screen-treatment');
-        setDots(3);
-      } else {
-        toast('No treatment saved for this entry');
+        showScreen('screen-treatment'); setDots(3);
       }
     } catch(e) {}
   }
 
-  // ── Share / export ────────────────────────────────────────
+  // ── Share ─────────────────────────────────────────────────
   function shareReport() {
     const disease = selectedDiagnosis || 'Unknown';
-    const sev = currentSeverity ? getSevLabel(currentSeverity) : 'Not assessed';
+    const sev = currentSeverity ? getSevLabel(currentSeverity) : '\u2014';
     const conf = currentDiagnoses.find(d => d.name === disease);
-    const confidence = conf ? `${conf.confidence}%` : '';
-    const treatEl = document.getElementById('treatment-card');
-    const treatText = treatEl ? treatEl.innerText : '';
-    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-    const summary = [
-      `CROP DOCTOR — FIELD REPORT`,
-      `Date: ${date}`,
-      ``,
-      `DIAGNOSIS: ${disease}${confidence ? ` (${confidence} confidence)` : ''}`,
-      `Severity: ${sev}`,
-      ``,
-      `TREATMENT PLAN:`,
-      treatText,
-      ``,
-      `Generated by Crop Doctor · Powered by Gemma 3n`
-    ].join('\n');
-
-    // Try Web Share API first (mobile), fall back to clipboard
+    const treatText = document.getElementById('treatment-card')?.innerText || '';
+    const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const summary = `CROP DOCTOR \u2014 FIELD REPORT\nDate: ${date}\n\nDIAGNOSIS: ${disease}${conf?` (${conf.confidence}% confidence)`:''}\nSeverity: ${sev}\n\nTREATMENT PLAN:\n${treatText}\n\nGenerated by Crop Doctor \u00B7 Powered by Gemma 3n`;
     if (navigator.share) {
-      navigator.share({ title: `Crop Doctor: ${disease}`, text: summary })
-        .catch(() => copyToClipboard(summary));
-    } else {
-      copyToClipboard(summary);
-    }
+      navigator.share({title:`Crop Doctor: ${disease}`,text:summary}).catch(()=>copyToClipboard(summary));
+    } else { copyToClipboard(summary); }
   }
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text)
       .then(() => toast(t('reportCopied')))
-      .catch(() => {
-        // Final fallback: open in new window
-        const w = window.open('', '_blank');
-        w.document.write(`<pre style="font-family:monospace;white-space:pre-wrap;padding:20px">${text}</pre>`);
-      });
+      .catch(() => { const w=window.open('','_blank'); w.document.write(`<pre style="font-family:monospace;white-space:pre-wrap;padding:20px">${text}</pre>`); });
   }
 
-  // ── Disease image lookup ──────────────────────────────────
-  // Maps keywords in disease names to reference image URLs
+  // ── Disease reference images ──────────────────────────────
   const DISEASE_IMAGES = {
-    'early blight':       'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Early_blight_on_tomato.jpg/320px-Early_blight_on_tomato.jpg',
-    'late blight':        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Tomato_late_blight.jpg/320px-Tomato_late_blight.jpg',
-    'powdery mildew':     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Powdery_mildew_on_grape.jpg/320px-Powdery_mildew_on_grape.jpg',
-    'downy mildew':       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Downy_mildew_on_grape_leaves.jpg/320px-Downy_mildew_on_grape_leaves.jpg',
-    'leaf spot':          'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Septoria_leaf_spot.jpg/320px-Septoria_leaf_spot.jpg',
-    'septoria':           'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Septoria_leaf_spot.jpg/320px-Septoria_leaf_spot.jpg',
-    'rust':               'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Wheat_leaf_rust.jpg/320px-Wheat_leaf_rust.jpg',
+    'early blight':       'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Early_blight_of_tomato.jpg/320px-Early_blight_of_tomato.jpg',
+    'late blight':        'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Phytophthora_infestans_potato_late_blight.jpg/320px-Phytophthora_infestans_potato_late_blight.jpg',
+    'powdery mildew':     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Powdery_mildew_on_pumpkin_leaf.jpg/320px-Powdery_mildew_on_pumpkin_leaf.jpg',
+    'downy mildew':       'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Downy_mildew_grapes.jpg/320px-Downy_mildew_grapes.jpg',
+    'rust':               'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Rust_fungus_on_leaf.jpg/320px-Rust_fungus_on_leaf.jpg',
+    'leaf spot':          'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Cercospora_leaf_spot.jpg/320px-Cercospora_leaf_spot.jpg',
     'anthracnose':        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Anthracnose_on_bean.jpg/320px-Anthracnose_on_bean.jpg',
     'fusarium':           'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fusarium_wilt_on_tomato.jpg/320px-Fusarium_wilt_on_tomato.jpg',
     'wilt':               'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fusarium_wilt_on_tomato.jpg/320px-Fusarium_wilt_on_tomato.jpg',
@@ -746,188 +712,162 @@
     'whitefly':           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Whiteflies_on_leaf.jpg/320px-Whiteflies_on_leaf.jpg',
     'nitrogen deficiency':'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Nitrogen_deficiency_in_corn.jpg/320px-Nitrogen_deficiency_in_corn.jpg',
     'chlorosis':          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Nitrogen_deficiency_in_corn.jpg/320px-Nitrogen_deficiency_in_corn.jpg',
-    'iron deficiency':    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Iron_deficiency_chlorosis.jpg/320px-Iron_deficiency_chlorosis.jpg',
     'bacterial spot':     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Bacterial_spot_on_tomato.jpg/320px-Bacterial_spot_on_tomato.jpg',
     'botrytis':           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Botrytis_cinerea_on_tomato.jpg/320px-Botrytis_cinerea_on_tomato.jpg',
     'gray mold':          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Botrytis_cinerea_on_tomato.jpg/320px-Botrytis_cinerea_on_tomato.jpg',
   };
 
-  const FALLBACK_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camponotus_flavomarginatus_ant.jpg/320px-Camponotus_flavomarginatus_ant.jpg';
-
   function getDiseaseImage(name) {
-    const lower = name.toLowerCase();
-    for (const [key, url] of Object.entries(DISEASE_IMAGES)) {
-      if (lower.includes(key)) return url;
-    }
-    return null; // no match — show no ref image
+    const lo = name.toLowerCase();
+    for (const [key, url] of Object.entries(DISEASE_IMAGES)) { if (lo.includes(key)) return url; }
+    return null;
   }
+  function confColor(p) { return p>=75?'var(--sprout)':p>=50?'var(--sun)':'var(--warn)'; }
 
-  function confColor(p) {
-    return p >= 75 ? 'var(--sprout)' : p >= 50 ? 'var(--sun)' : 'var(--warn)';
-  }
-
-  // ── Parse 3 diagnoses from model output ──────────────────
+  // ── Parse diagnoses — DIAGNOSIS_N: markers always stay English ──
   function parseDiagnoses(text) {
     const results = [];
-    // Match blocks starting with DIAGNOSIS_1:, DIAGNOSIS_2:, DIAGNOSIS_3:
-    const pattern = /DIAGNOSIS_\d:\s*(.+?)\s*\|\s*(\d{1,3})%[^\n]*\n([\s\S]*?)(?=DIAGNOSIS_\d:|$)/gi;
-    let match;
-    while ((match = pattern.exec(text)) !== null) {
-      results.push({
-        name: match[1].trim(),
-        confidence: parseInt(match[2]),
-        description: match[3].trim()
-      });
+    // Primary: DIAGNOSIS_1: Name | 85%  (markers always English per system prompt)
+    const pat = /DIAGNOSIS_\d[:\s]+(.+?)\s*\|\s*(\d{1,3})\s*%[^\n]*\n?([\s\S]*?)(?=DIAGNOSIS_\d|$)/gi;
+    let m;
+    while ((m = pat.exec(text)) !== null && results.length < 3) {
+      const desc = m[3].trim().replace(/^Severity[:\s].+$/im,'').trim();
+      results.push({ name: m[1].trim(), confidence: parseInt(m[2]), description: desc });
     }
-
-    // Fallback: if model didn't follow format, try to extract numbered list
-    if (results.length === 0) {
-      const lines = text.split('\n');
-      let current = null;
-      lines.forEach(line => {
-        const header = line.match(/^(\d+)\.\s+(.+?)\s*[–—-]\s*(\d{1,3})%/);
-        const confInline = line.match(/^(.+?)\s*[–—-]\s*(\d{1,3})%\s*confidence/i);
-        if (header) {
-          if (current) results.push(current);
-          current = { name: header[2].trim(), confidence: parseInt(header[3]), description: '' };
-        } else if (confInline && results.length < 3) {
-          if (current) results.push(current);
-          current = { name: confInline[1].trim(), confidence: parseInt(confInline[2]), description: '' };
-        } else if (current && line.trim()) {
-          current.description += (current.description ? ' ' : '') + line.trim();
+    // Fallback: numbered list
+    if (!results.length) {
+      let cur = null;
+      for (const line of text.split('\n')) {
+        const h = line.match(/^(\d+)[.)]\s+(.+?)\s*[|\-\u2013\u2014]\s*(\d{1,3})\s*%/);
+        if (h) {
+          if (cur) results.push(cur);
+          cur = { name: h[2].trim(), confidence: parseInt(h[3]), description: '' };
+        } else if (cur && line.trim() && !/^Severity/i.test(line)) {
+          cur.description += (cur.description?' ':'')+line.trim();
         }
-      });
-      if (current) results.push(current);
+      }
+      if (cur) results.push(cur);
     }
-
-    // Final fallback: single result from full text
-    if (results.length === 0) {
+    if (!results.length) {
       const pct = text.match(/(\d{1,3})\s*%/);
-      results.push({ name: 'See full analysis', confidence: pct ? parseInt(pct[1]) : 0, description: text });
+      results.push({ name: 'See full analysis', confidence: pct?parseInt(pct[1]):0, description: text });
     }
-
-    return results.slice(0, 3);
+    return results.slice(0,3);
   }
 
-  // ── Render diagnosis cards ────────────────────────────────
+  // ── Render diagnosis ──────────────────────────────────────
   function renderDiagnosis(text) {
-    const diagnoses = parseDiagnoses(text);
-    currentDiagnoses = diagnoses;
+    currentDiagnoses = parseDiagnoses(text);
     const col = document.getElementById('diag-text-col');
-    col.innerHTML = '<p class="section-label">Top Diagnoses</p>';
-
-    // Extract severity from full text
+    col.innerHTML = `<p class="section-label">${esc(t('topDiagnoses'))}</p>`;
     renderSeverity(parseSeverity(text));
 
-    diagnoses.forEach((d, i) => {
-      const isPrimary = i === 0;
+    currentDiagnoses.forEach((d, i) => {
       const refImg = getDiseaseImage(d.name);
-      const rankLabels = [t('mostLikely'), t('second'), t('third')];
-
+      const ranks = [t('mostLikely'), t('second'), t('third')];
       const card = document.createElement('div');
-      card.className = 'diag-card' + (isPrimary ? ' primary' : '');
+      card.className = 'diag-card' + (i===0?' primary':'');
       card.onclick = () => selectDiagnosis(i, d.name);
       card.innerHTML = `
-        ${refImg ? `<img class="diag-ref-img" src="${refImg}" alt="${esc(d.name)}" onerror="this.style.display='none'" />` : ''}
+        ${refImg?`<img class="diag-ref-img" src="${refImg}" alt="${esc(d.name)}" onerror="this.style.display='none'" />`:''}
         <div class="diag-card-body">
           <div class="diag-card-header">
             <span class="diag-name">${esc(d.name)}</span>
             <div style="display:flex;align-items:center;gap:6px">
-              <span class="diag-rank">${rankLabels[i] || ''}</span>
-              <div class="select-indicator" id="sel-${i}"></div>
+              <span class="diag-rank">${esc(ranks[i]||'')}</span>
+              <div class="select-indicator"></div>
             </div>
           </div>
           <div class="conf-row">
-            <div class="conf-bar-track">
-              <div class="conf-bar-fill" id="bar-${i}" style="width:0%; background:${confColor(d.confidence)}"></div>
-            </div>
+            <div class="conf-bar-track"><div class="conf-bar-fill" id="bar-${i}" style="width:0%;background:${confColor(d.confidence)}"></div></div>
             <span class="conf-pct" style="color:${confColor(d.confidence)}">${d.confidence}%</span>
           </div>
-          ${d.description ? `<p class="diag-desc">${esc(d.description)}</p>` : ''}
-        </div>
-      `;
+          ${d.description?`<p class="diag-desc">${esc(d.description)}</p>`:''}
+        </div>`;
       col.appendChild(card);
-
-      // Animate bar after paint
-      setTimeout(() => {
-        const bar = document.getElementById(`bar-${i}`);
-        if (bar) bar.style.width = `${d.confidence}%`;
-      }, 50 + i * 120);
+      setTimeout(() => { const b=document.getElementById(`bar-${i}`); if(b) b.style.width=`${d.confidence}%`; }, 50+i*120);
     });
   }
 
-  // ── Render treatment ──────────────────────────────────────
+  // ── Render treatment — robust multi-language list parser ──
   function renderTreatment(text) {
     currentTreatment = text;
-    // Set disease name in header
-    if (selectedDiagnosis) {
-      document.getElementById('treatment-disease-name').textContent = selectedDiagnosis;
-    }
+    if (selectedDiagnosis) document.getElementById('treatment-disease-name').textContent = selectedDiagnosis;
     const card = document.getElementById('treatment-card');
+
+    // Detect list lines: numbered (1. 1) 1:) or any bullet character
+    const isStep = line => /^(?:\d+[.):\s]|[•\-\*\u2013\u2014\u2022\u2023\u25B6\u2713\u2717\u2192])\s+\S/.test(line);
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-    const steps = [], prose = [];
-    lines.forEach(line => {
-      const num = line.match(/^(\d+)\.\s+(.+)/);
-      const bul = line.match(/^[-•*]\s+(.+)/);
-      if (num) steps.push({ n: num[1], text: num[2] });
-      else if (bul) steps.push({ n: steps.length + 1, text: bul[1] });
-      else prose.push(line);
-    });
+
+    const steps = [];
+    const prose = [];
+
+    for (const line of lines) {
+      if (isStep(line)) {
+        const content = line.replace(/^(?:\d+[.):\s]|[•\-\*\u2013\u2014\u2022\u2023\u25B6\u2713\u2717\u2192])\s+/, '').trim();
+        if (content) steps.push(content);
+      } else if (line.length > 4 && !/^#+/.test(line)) {
+        prose.push(line);
+      }
+    }
+
     if (steps.length > 0) {
-      const stepsHTML = steps.map(s => `<div class="treatment-step"><div class="step-num">${s.n}</div><p class="step-text">${esc(s.text)}</p></div>`).join('');
-      const proseHTML = prose.length ? `<p class="treatment-prose" style="margin-top:12px">${esc(prose.join(' '))}</p>` : '';
-      card.innerHTML = `<div class="treatment-steps">${stepsHTML}</div>${proseHTML}`;
+      const stepsHTML = steps.map((s, i) =>
+        `<div class="treatment-step"><div class="step-num">${i+1}</div><p class="step-text">${esc(s)}</p></div>`
+      ).join('');
+      card.innerHTML = `<div class="treatment-steps">${stepsHTML}</div>` +
+        (prose.length ? `<p class="treatment-prose" style="margin-top:12px">${esc(prose.join(' '))}</p>` : '');
     } else {
-      card.innerHTML = text.split(/\n{2,}/).map(p => `<p class="treatment-prose">${esc(p.trim())}</p>`).join('');
+      card.innerHTML = text.split(/\n{2,}/).map(p => `<p class="treatment-prose">${esc(p.trim())}</p>`).filter(p=>p.length>20).join('');
+      if (!card.innerHTML) card.innerHTML = `<p class="treatment-prose">${esc(text)}</p>`;
     }
   }
 
   function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  // ── Camera / upload ───────────────────────────────────────
-  function handleUpload(e) {
-    const file = e.target.files[0]; if (!file) return;
-    e.target.value = ''; pendingBlob = file;
-    showPreview(URL.createObjectURL(file));
-  }
-
+  // ── Camera ────────────────────────────────────────────────
   async function startCamera() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false});
       document.getElementById('video').srcObject = stream;
-    } catch (e) { toast('Camera access denied'); }
+    } catch(e) { toast('Camera access denied'); }
+  }
+
+  function handleUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    e.target.value = ''; pendingBlob = file; showPreview(URL.createObjectURL(file));
   }
 
   function snapPhoto() {
-    const video = document.getElementById('video'), canvas = document.getElementById('canvas');
-    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    const dataURL = canvas.toDataURL('image/jpeg', 0.85);
-    canvas.toBlob(blob => { pendingBlob = blob; showPreview(dataURL); }, 'image/jpeg', 0.85);
+    const v=document.getElementById('video'), c=document.getElementById('canvas');
+    c.width=v.videoWidth; c.height=v.videoHeight;
+    c.getContext('2d').drawImage(v,0,0);
+    const url = c.toDataURL('image/jpeg',0.85);
+    c.toBlob(blob=>{ pendingBlob=blob; showPreview(url); },'image/jpeg',0.85);
   }
 
   function showPreview(url) {
     currentImageUrl = url;
-    document.getElementById('preview-img').src = url;
-    document.getElementById('snap-preview').src = url;
-    document.getElementById('treatment-preview').src = url;
+    ['preview-img','snap-preview','treatment-preview'].forEach(id => document.getElementById(id).src = url);
     showScreen('screen-preview');
   }
 
-  function retakePhoto() { pendingBlob = null; showScreen('screen-camera'); }
-  function submitPhoto() { if (!pendingBlob) return; showThinking(t('runningDiag')); sendDiagnosis(pendingBlob); pendingBlob = null; }
+  function retakePhoto() { pendingBlob=null; showScreen('screen-camera'); }
+  function submitPhoto() { if(!pendingBlob) return; showThinking(t('runningDiag')); sendDiagnosis(pendingBlob); pendingBlob=null; }
 
   // ── API ───────────────────────────────────────────────────
   async function sendDiagnosis(blob) {
-    const form = new FormData(); form.append('file', blob, 'plant.jpg'); form.append('lang', currentLang);
+    const form = new FormData();
+    form.append('file', blob, 'plant.jpg');
+    form.append('lang', currentLang);
     try {
-      const res = await fetch(`${API}/diagnose`, { method: 'POST', body: form });
+      const res = await fetch(`${API}/diagnose`, {method:'POST', body:form});
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Diagnosis failed');
+      if (!res.ok) throw new Error(data.detail||'Diagnosis failed');
       sessionId = data.session_id;
       renderDiagnosis(data.diagnosis);
       setStatus('DIAGNOSED'); showScreen('screen-diagnosis'); setDots(2);
-    } catch (e) { toast(e.message); showScreen('screen-camera'); }
+    } catch(e) { toast(e.message); showScreen('screen-camera'); }
   }
 
   async function getTreatment() {
@@ -939,64 +879,73 @@
       : userContext;
     showThinking(t('preparingTreat'));
     try {
-      const res = await fetch(`${API}/treatment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: sessionId, message, lang: currentLang }) });
+      const res = await fetch(`${API}/treatment`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({session_id:sessionId, message, lang:currentLang})
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Treatment failed');
+      if (!res.ok) throw new Error(data.detail||'Treatment failed');
       renderTreatment(data.treatment);
       if (selectedDiagnosis) {
-        const topDiag = currentDiagnoses.find(d => d.name === selectedDiagnosis) || currentDiagnoses[0];
-        saveToHistory({ disease: selectedDiagnosis, confidence: topDiag ? topDiag.confidence : 0, severity: currentSeverity, treatment: data.treatment, imageUrl: currentImageUrl, timestamp: Date.now() });
+        const topDiag = currentDiagnoses.find(d=>d.name===selectedDiagnosis)||currentDiagnoses[0];
+        saveToHistory({disease:selectedDiagnosis, confidence:topDiag?topDiag.confidence:0, severity:currentSeverity, treatment:data.treatment, imageUrl:currentImageUrl, timestamp:Date.now()});
       }
       setStatus('PLAN READY'); showScreen('screen-treatment'); setDots(3);
-    } catch (e) { toast(e.message); showScreen('screen-voice'); }
+    } catch(e) { toast(e.message); showScreen('screen-voice'); }
   }
 
   // ── Voice ─────────────────────────────────────────────────
   function setupSpeech() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
-    recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
-    recognition.onresult = (e) => { let t = ''; for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript; document.getElementById('transcript-box').value = t; };
+    recognition = new SR(); recognition.continuous=true; recognition.interimResults=true;
+    recognition.lang = LANGS[currentLang].code;
+    recognition.onresult = e => { let txt=''; for(let i=e.resultIndex;i<e.results.length;i++) txt+=e.results[i][0].transcript; document.getElementById('transcript-box').value=txt; };
     recognition.onend = () => stopRecording();
   }
-  function toggleVoice() { if (!recognition) { toast('Use Chrome for voice — or type below'); return; } isRecording ? stopRecording() : startRecording(); }
-  function startRecording() { isRecording = true; document.getElementById('mic-btn').classList.add('recording'); document.getElementById('mic-icon').textContent = '⏹'; document.getElementById('transcript-box').value = ''; recognition.start(); }
-  function stopRecording() { isRecording = false; document.getElementById('mic-btn').classList.remove('recording'); document.getElementById('mic-icon').textContent = '🎙'; try { recognition.stop(); } catch(_) {} }
+  function toggleVoice() { if(!recognition){toast('Use Chrome for voice'); return;} isRecording?stopRecording():startRecording(); }
+  function startRecording() { isRecording=true; document.getElementById('mic-btn').classList.add('recording'); document.getElementById('mic-icon').textContent='\u23F9'; document.getElementById('transcript-box').value=''; recognition.lang=LANGS[currentLang].code; recognition.start(); }
+  function stopRecording() { isRecording=false; document.getElementById('mic-btn').classList.remove('recording'); document.getElementById('mic-icon').textContent='\uD83C\uDF99'; try{recognition.stop();}catch(_){} }
 
   // ── Util ──────────────────────────────────────────────────
   function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if (id === 'screen-history') renderHistory();
+    if (id==='screen-history') renderHistory();
   }
-  function showThinking(sub) { document.getElementById('thinking-sub').textContent = sub; showScreen('screen-thinking'); }
+  function showThinking(sub) { document.getElementById('thinking-sub').textContent=sub; showScreen('screen-thinking'); }
+
   function selectDiagnosis(index, name) {
     selectedDiagnosis = name;
-    document.querySelectorAll('.diag-card').forEach((c, i) => c.classList.toggle('selected', i === index));
+    document.querySelectorAll('.diag-card').forEach((c,i)=>c.classList.toggle('selected',i===index));
     const btn = document.getElementById('get-treatment-btn');
-    btn.disabled = false; btn.style.opacity = '1';
-    btn.textContent = `${t('getTreatment').replace('→','').trim()}: ${name.length > 18 ? name.slice(0,18)+'…' : name} →`;
+    btn.disabled = false;
+    const short = name.length>18 ? name.slice(0,18)+'\u2026' : name;
+    btn.textContent = t('getTreatment')+': '+short+' \u2192';
   }
 
   function goToVoice() {
     document.getElementById('transcript-box').value = '';
-    // Pre-fill context with selected diagnosis
-    if (selectedDiagnosis) {
-      document.getElementById('transcript-box').placeholder = `I've selected "${selectedDiagnosis}". Describe your available treatments, acreage, and recent weather…`;
-    }
+    document.getElementById('transcript-box').placeholder = t('micPlaceholder');
     showScreen('screen-voice');
   }
-  function setDots(active) { for (let i = 1; i <= 3; i++) { const d = document.getElementById(`dot-${i}`); d.className = 'step-dot' + (i < active ? ' done' : i === active ? ' active' : ''); } }
-  function setStatus(t) { document.getElementById('status-pill').textContent = t; }
+
+  function setDots(active) {
+    for(let i=1;i<=3;i++) document.getElementById(`dot-${i}`).className='step-dot'+(i<active?' done':i===active?' active':'');
+  }
+  function setStatus(s) { document.getElementById('status-pill').textContent=s; }
+
   function resetApp() {
-    sessionId = null; pendingBlob = null; selectedDiagnosis = null;
-    currentDiagnoses = []; currentSeverity = null; currentTreatment = null; currentImageUrl = null;
-    document.getElementById('transcript-box').value = '';
-    document.getElementById('severity-row').style.display = 'none';
+    sessionId=null; pendingBlob=null; selectedDiagnosis=null;
+    currentDiagnoses=[]; currentSeverity=null; currentTreatment=null; currentImageUrl=null;
+    document.getElementById('transcript-box').value='';
+    document.getElementById('severity-row').style.display='none';
     const btn = document.getElementById('get-treatment-btn');
-    btn.disabled = true; btn.style.opacity = '0.4'; btn.textContent = t('selectDiag');
+    btn.disabled=true; btn.textContent=t('selectDiag');
     setStatus('READY'); setDots(1); showScreen('screen-camera');
   }
-  function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3200); }
+
+  function toast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3200); }
 
   startCamera();
   setupSpeech();
