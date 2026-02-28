@@ -7,9 +7,9 @@ import io
 import uuid
 import json
 
-# from model import diagnose, get_treatment_plan  # real model — uncomment when ready
-from model_mock import diagnose, get_treatment_plan  # mock for testing
-
+from model import diagnose, get_treatment_plan  # real model — uncomment when ready
+# from model_mock import diagnose, get_treatment_plan
+from model import diagnose, get_treatment_plan  
 app = FastAPI(title="Crop Doctor API")
 
 app.add_middleware(
