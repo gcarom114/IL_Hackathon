@@ -28,9 +28,19 @@ def get_model():
 
 
 SYSTEM_PROMPT = """You are an expert agronomist and plant pathologist with decades of field experience.
-When shown a plant image, identify any visible diseases, pests, or deficiencies.
-Be specific: state the disease name, an estimated confidence level, and a brief explanation.
-When asked for a treatment plan, give actionable advice tailored to what the farmer has available.
+
+When shown a plant image, provide exactly 3 possible diagnoses ranked by likelihood. Use this exact format:
+
+DIAGNOSIS_1: [Disease Name] | [0-100]% confidence
+[2-3 sentence description of symptoms and why you suspect this]
+
+DIAGNOSIS_2: [Disease Name] | [0-100]% confidence
+[2-3 sentence description of symptoms and why you suspect this]
+
+DIAGNOSIS_3: [Disease Name] | [0-100]% confidence
+[2-3 sentence description of symptoms and why you suspect this]
+
+When asked for a treatment plan, give numbered actionable steps tailored to what the farmer has available.
 Keep responses concise and practical — the farmer is in the field."""
 
 
@@ -42,6 +52,10 @@ def build_system_message():
 
 
 def diagnose(image: Image.Image) -> tuple[str, list]:
+    """
+    Takes a PIL image, returns (diagnosis_text, conversation_history).
+    conversation_history is passed back into get_treatment_plan.
+    """
     model, processor = get_model()
 
     messages = [
@@ -61,7 +75,7 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
         tokenize=True,
         return_dict=True,
         return_tensors="pt"
-    ).to(model.device).to(torch.bfloat16)
+    ).to(model.device)
 
     input_len = inputs["input_ids"].shape[-1]
 
@@ -71,6 +85,7 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
     output = generation[0][input_len:]
     diagnosis = processor.decode(output, skip_special_tokens=True)
 
+    # Build history for follow-up turns
     history = [
         build_system_message(),
         {
@@ -90,6 +105,10 @@ def diagnose(image: Image.Image) -> tuple[str, list]:
 
 
 def get_treatment_plan(history: list, farmer_message: str) -> tuple[str, list]:
+    """
+    Takes existing conversation history and farmer's follow-up message.
+    Returns (treatment_plan_text, updated_history).
+    """
     model, processor = get_model()
 
     history.append({
@@ -103,7 +122,7 @@ def get_treatment_plan(history: list, farmer_message: str) -> tuple[str, list]:
         tokenize=True,
         return_dict=True,
         return_tensors="pt"
-    ).to(model.device).to(torch.bfloat16)
+    ).to(model.device)
 
     input_len = inputs["input_ids"].shape[-1]
 

@@ -9,10 +9,10 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --soil:   #1a1410; --bark:   #2c2118; --moss:   #2d4a2d;
-      --leaf:   #4a7c4a; --sprout: #7ab87a; --sun:    #c8a84b;
-      --cream:  #f0e8d8; --fog:    #8a8070; --danger: #c05a3a;
-      --warn:   #c8923a; --radius: 4px;
+      --soil: #1a1410; --bark: #2c2118; --moss: #2d4a2d;
+      --leaf: #4a7c4a; --sprout: #7ab87a; --sun: #c8a84b;
+      --cream: #f0e8d8; --fog: #8a8070; --danger: #c05a3a;
+      --warn: #c8923a; --radius: 4px;
     }
     html, body { height: 100%; background: var(--soil); color: var(--cream); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow: hidden; }
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: 0.6; }
@@ -27,6 +27,8 @@
     .step-dot.done { background: var(--leaf); } .step-dot.active { background: var(--sprout); }
     .screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
     .screen.active { display: flex; }
+
+    /* Camera */
     #screen-camera { align-items: center; justify-content: space-between; padding: 0 24px 20px; gap: 12px; }
     .camera-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--fog); letter-spacing: 2px; text-transform: uppercase; text-align: center; padding-top: 6px; }
     .viewfinder { position: relative; width: 100%; flex: 1; background: var(--bark); border-radius: var(--radius); overflow: hidden; max-height: 52vh; }
@@ -40,41 +42,78 @@
     .scan-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--sprout), transparent); animation: scan 3s ease-in-out infinite; opacity: 0.6; z-index: 2; }
     @keyframes scan { 0% { top: 15%; } 50% { top: 85%; } 100% { top: 15%; } }
     .camera-hint { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 14px; color: var(--fog); text-align: center; }
+
+    /* Buttons */
     .btn-primary { width: 100%; padding: 15px; background: var(--moss); border: 1px solid var(--leaf); color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: background 0.2s, transform 0.1s; }
-    .btn-primary:hover { background: var(--leaf); } .btn-primary:active { transform: scale(0.98); } .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary:hover { background: var(--leaf); } .btn-primary:active { transform: scale(0.98); }
     .btn-secondary { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
     .btn-secondary:hover { border-color: var(--fog); color: var(--cream); }
     .btn-danger { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(192,90,58,0.4); color: var(--danger); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
     .btn-danger:hover { border-color: var(--danger); background: rgba(192,90,58,0.1); }
     .btn-row { display: flex; gap: 10px; width: 100%; }
-    .btn-row .btn-primary, .btn-row .btn-secondary, .btn-row .btn-danger { flex: 1; }
+    .btn-row > * { flex: 1; }
     .divider { display: flex; align-items: center; gap: 12px; color: var(--fog); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; width: 100%; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+    .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--sun); letter-spacing: 2.5px; text-transform: uppercase; flex-shrink: 0; }
+
+    /* Preview */
     #screen-preview { padding: 16px 24px 20px; gap: 14px; align-items: center; }
     .preview-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sun); letter-spacing: 2px; text-transform: uppercase; align-self: flex-start; }
     .preview-img-wrap { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; border-radius: var(--radius); background: var(--bark); border: 1px solid rgba(255,255,255,0.07); min-height: 0; }
-    #preview-img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; border-radius: var(--radius); }
+    #preview-img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
     .preview-hint { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 14px; color: var(--fog); text-align: center; }
+
+    /* Thinking */
     #screen-thinking { align-items: center; justify-content: center; gap: 24px; padding: 24px; }
     .thinking-icon { width: 72px; height: 72px; border-radius: 50%; border: 1px solid var(--moss); border-top-color: var(--sprout); animation: spin 1.2s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .thinking-text { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 22px; color: var(--cream); text-align: center; }
     .thinking-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--fog); letter-spacing: 1px; }
-    #screen-diagnosis { padding: 16px 24px 20px; gap: 14px; overflow-y: auto; }
+
+    /* Diagnosis — side by side */
+    #screen-diagnosis { padding: 16px 24px 20px; gap: 12px; overflow: hidden; }
     .diagnosis-layout { display: flex; gap: 16px; flex: 1; min-height: 0; overflow: hidden; }
-    .diagnosis-img-col { flex: 0 0 auto; width: 38%; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-    .diagnosis-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
-    .diagnosis-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
-    .diagnosis-text-col { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; }
-    .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--sun); letter-spacing: 2.5px; text-transform: uppercase; }
-    .confidence-block { display: flex; flex-direction: column; gap: 6px; }
-    .confidence-header { display: flex; justify-content: space-between; align-items: baseline; }
-    .disease-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--cream); line-height: 1.2; }
-    .confidence-pct { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; }
-    .confidence-bar-track { height: 6px; background: var(--bark); border-radius: 3px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
-    .confidence-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
-    .diagnosis-card { background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 14px; flex: 1; overflow-y: auto; }
-    .diagnosis-body { font-size: 13px; line-height: 1.7; color: var(--cream); }
+    .diag-img-col { flex: 0 0 auto; width: 34%; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+    .diag-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
+    .diag-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+    .diag-text-col { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; min-height: 0; padding-right: 2px; }
+
+    /* Diagnosis cards */
+    .diag-card {
+      background: var(--bark);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .diag-card:hover { border-color: rgba(122,184,122,0.3); }
+    .diag-card.primary { border-color: rgba(122,184,122,0.4); background: rgba(45,74,45,0.4); }
+
+    .diag-ref-img {
+      width: 52px; height: 52px; flex-shrink: 0;
+      border-radius: 3px; object-fit: cover;
+      background: var(--soil);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .diag-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+
+    .diag-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .diag-name { font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--cream); line-height: 1.2; }
+    .diag-rank { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--fog); letter-spacing: 1px; flex-shrink: 0; }
+
+    .conf-row { display: flex; align-items: center; gap: 8px; }
+    .conf-bar-track { flex: 1; height: 4px; background: rgba(0,0,0,0.4); border-radius: 2px; overflow: hidden; }
+    .conf-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+    .conf-pct { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+
+    .diag-desc { font-size: 11px; line-height: 1.55; color: var(--fog); }
+
+    /* Voice */
     #screen-voice { padding: 16px 24px 20px; gap: 14px; overflow-y: auto; }
     .voice-area { background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
     .voice-prompt { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 15px; color: var(--fog); line-height: 1.5; }
@@ -85,18 +124,22 @@
     .mic-icon { font-size: 22px; }
     #transcript-box { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 12px; min-height: 65px; resize: none; outline: none; transition: border-color 0.2s; }
     #transcript-box:focus { border-color: var(--leaf); } #transcript-box::placeholder { color: var(--fog); }
-    #screen-treatment { padding: 16px 24px 20px; gap: 14px; overflow-y: auto; }
+
+    /* Treatment — side by side */
+    #screen-treatment { padding: 16px 24px 20px; gap: 12px; overflow: hidden; }
     .treatment-layout { display: flex; gap: 16px; flex: 1; min-height: 0; overflow: hidden; }
-    .treatment-img-col { flex: 0 0 auto; width: 32%; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-    .treatment-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
-    .treatment-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
-    .treatment-text-col { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; }
+    .treat-img-col { flex: 0 0 auto; width: 30%; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+    .treat-img-wrap { flex: 1; background: var(--bark); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
+    .treat-img-wrap img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+    .treat-text-col { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; min-height: 0; }
     .treatment-card { background: var(--bark); border: 1px solid rgba(122,184,122,0.15); border-radius: var(--radius); padding: 14px; flex: 1; overflow-y: auto; }
     .treatment-steps { display: flex; flex-direction: column; gap: 10px; }
     .treatment-step { display: flex; gap: 12px; align-items: flex-start; }
-    .step-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--moss); border: 1px solid var(--leaf); color: var(--sprout); font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+    .step-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--moss); border: 1px solid var(--leaf); color: var(--sprout); font-family: 'IBM Plex Mono', monospace; font-size: 10px; display: flex; align-items: center; justify-content: center; }
     .step-text { font-size: 13px; line-height: 1.65; color: var(--cream); flex: 1; padding-top: 2px; }
-    .treatment-prose { font-size: 13px; line-height: 1.7; color: var(--cream); }
+    .treatment-prose { font-size: 13px; line-height: 1.7; color: var(--cream); margin-bottom: 10px; }
+
+    /* Toast */
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--danger); color: white; padding: 10px 20px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: transform 0.3s; z-index: 1000; white-space: nowrap; }
     #toast.show { transform: translateX(-50%) translateY(0); }
     ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 2px; }
@@ -136,12 +179,10 @@
     <input type="file" id="upload-input" accept="image/*" style="display:none" onchange="handleUpload(event)" />
   </div>
 
-  <!-- SCREEN 1b: Preview + confirm -->
+  <!-- SCREEN 1b: Preview -->
   <div class="screen" id="screen-preview">
     <p class="preview-label">Confirm photo</p>
-    <div class="preview-img-wrap">
-      <img id="preview-img" src="" alt="preview" />
-    </div>
+    <div class="preview-img-wrap"><img id="preview-img" src="" alt="preview" /></div>
     <p class="preview-hint">Does this clearly show the affected area?</p>
     <div class="btn-row">
       <button class="btn-danger" onclick="retakePhoto()">↩ Retake</button>
@@ -159,33 +200,21 @@
   <!-- SCREEN 3: Diagnosis -->
   <div class="screen" id="screen-diagnosis">
     <div class="diagnosis-layout">
-      <div class="diagnosis-img-col">
+      <div class="diag-img-col">
         <p class="section-label">Captured</p>
-        <div class="diagnosis-img-wrap">
-          <img id="snap-preview" src="" alt="plant" />
-        </div>
+        <div class="diag-img-wrap"><img id="snap-preview" src="" alt="plant" /></div>
       </div>
-      <div class="diagnosis-text-col">
-        <p class="section-label">Diagnosis</p>
-        <div class="confidence-block" id="confidence-block" style="display:none">
-          <div class="confidence-header">
-            <span class="disease-name" id="disease-name"></span>
-            <span class="confidence-pct" id="confidence-pct"></span>
-          </div>
-          <div class="confidence-bar-track">
-            <div class="confidence-bar-fill" id="confidence-bar" style="width:0%"></div>
-          </div>
-        </div>
-        <div class="diagnosis-card">
-          <p class="diagnosis-body" id="diagnosis-text"></p>
-        </div>
-        <button class="btn-primary" onclick="goToVoice()">Get Treatment Plan →</button>
-        <button class="btn-secondary" onclick="resetApp()">↩ New Photo</button>
+      <div class="diag-text-col" id="diag-text-col">
+        <!-- filled by JS -->
       </div>
+    </div>
+    <div class="btn-row" style="flex-shrink:0">
+      <button class="btn-secondary" onclick="resetApp()">↩ New Photo</button>
+      <button class="btn-primary" onclick="goToVoice()">Get Treatment →</button>
     </div>
   </div>
 
-  <!-- SCREEN 4: Voice input -->
+  <!-- SCREEN 4: Voice -->
   <div class="screen" id="screen-voice">
     <p class="section-label">Tell the doctor more</p>
     <div class="voice-area">
@@ -202,13 +231,11 @@
   <!-- SCREEN 5: Treatment -->
   <div class="screen" id="screen-treatment">
     <div class="treatment-layout">
-      <div class="treatment-img-col">
+      <div class="treat-img-col">
         <p class="section-label">Plant</p>
-        <div class="treatment-img-wrap">
-          <img id="treatment-preview" src="" alt="plant" />
-        </div>
+        <div class="treat-img-wrap"><img id="treatment-preview" src="" alt="plant" /></div>
       </div>
-      <div class="treatment-text-col">
+      <div class="treat-text-col">
         <p class="section-label">Treatment Plan</p>
         <div class="treatment-card" id="treatment-card"></div>
         <button class="btn-primary" onclick="goToVoice()">Ask Another Question</button>
@@ -224,11 +251,154 @@
   const API = '';
   let sessionId = null, recognition = null, isRecording = false, pendingBlob = null;
 
-  function handleUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    event.target.value = '';
-    pendingBlob = file;
+  // ── Disease image lookup ──────────────────────────────────
+  // Maps keywords in disease names to reference image URLs
+  const DISEASE_IMAGES = {
+    'early blight':       'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Early_blight_on_tomato.jpg/320px-Early_blight_on_tomato.jpg',
+    'late blight':        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Tomato_late_blight.jpg/320px-Tomato_late_blight.jpg',
+    'powdery mildew':     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Powdery_mildew_on_grape.jpg/320px-Powdery_mildew_on_grape.jpg',
+    'downy mildew':       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Downy_mildew_on_grape_leaves.jpg/320px-Downy_mildew_on_grape_leaves.jpg',
+    'leaf spot':          'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Septoria_leaf_spot.jpg/320px-Septoria_leaf_spot.jpg',
+    'septoria':           'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Septoria_leaf_spot.jpg/320px-Septoria_leaf_spot.jpg',
+    'rust':               'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Wheat_leaf_rust.jpg/320px-Wheat_leaf_rust.jpg',
+    'anthracnose':        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Anthracnose_on_bean.jpg/320px-Anthracnose_on_bean.jpg',
+    'fusarium':           'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fusarium_wilt_on_tomato.jpg/320px-Fusarium_wilt_on_tomato.jpg',
+    'wilt':               'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fusarium_wilt_on_tomato.jpg/320px-Fusarium_wilt_on_tomato.jpg',
+    'mosaic':             'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Tomato_mosaic_virus.jpg/320px-Tomato_mosaic_virus.jpg',
+    'aphid':              'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Aphids_on_a_pepper_plant.jpg/320px-Aphids_on_a_pepper_plant.jpg',
+    'spider mite':        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Tetranychus_urticae_with_silk.jpg/320px-Tetranychus_urticae_with_silk.jpg',
+    'whitefly':           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Whiteflies_on_leaf.jpg/320px-Whiteflies_on_leaf.jpg',
+    'nitrogen deficiency':'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Nitrogen_deficiency_in_corn.jpg/320px-Nitrogen_deficiency_in_corn.jpg',
+    'chlorosis':          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Nitrogen_deficiency_in_corn.jpg/320px-Nitrogen_deficiency_in_corn.jpg',
+    'iron deficiency':    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Iron_deficiency_chlorosis.jpg/320px-Iron_deficiency_chlorosis.jpg',
+    'bacterial spot':     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Bacterial_spot_on_tomato.jpg/320px-Bacterial_spot_on_tomato.jpg',
+    'botrytis':           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Botrytis_cinerea_on_tomato.jpg/320px-Botrytis_cinerea_on_tomato.jpg',
+    'gray mold':          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Botrytis_cinerea_on_tomato.jpg/320px-Botrytis_cinerea_on_tomato.jpg',
+  };
+
+  const FALLBACK_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camponotus_flavomarginatus_ant.jpg/320px-Camponotus_flavomarginatus_ant.jpg';
+
+  function getDiseaseImage(name) {
+    const lower = name.toLowerCase();
+    for (const [key, url] of Object.entries(DISEASE_IMAGES)) {
+      if (lower.includes(key)) return url;
+    }
+    return null; // no match — show no ref image
+  }
+
+  function confColor(p) {
+    return p >= 75 ? 'var(--sprout)' : p >= 50 ? 'var(--sun)' : 'var(--warn)';
+  }
+
+  // ── Parse 3 diagnoses from model output ──────────────────
+  function parseDiagnoses(text) {
+    const results = [];
+    // Match blocks starting with DIAGNOSIS_1:, DIAGNOSIS_2:, DIAGNOSIS_3:
+    const pattern = /DIAGNOSIS_\d:\s*(.+?)\s*\|\s*(\d{1,3})%[^\n]*\n([\s\S]*?)(?=DIAGNOSIS_\d:|$)/gi;
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      results.push({
+        name: match[1].trim(),
+        confidence: parseInt(match[2]),
+        description: match[3].trim()
+      });
+    }
+
+    // Fallback: if model didn't follow format, try to extract numbered list
+    if (results.length === 0) {
+      const lines = text.split('\n');
+      let current = null;
+      lines.forEach(line => {
+        const header = line.match(/^(\d+)\.\s+(.+?)\s*[–—-]\s*(\d{1,3})%/);
+        const confInline = line.match(/^(.+?)\s*[–—-]\s*(\d{1,3})%\s*confidence/i);
+        if (header) {
+          if (current) results.push(current);
+          current = { name: header[2].trim(), confidence: parseInt(header[3]), description: '' };
+        } else if (confInline && results.length < 3) {
+          if (current) results.push(current);
+          current = { name: confInline[1].trim(), confidence: parseInt(confInline[2]), description: '' };
+        } else if (current && line.trim()) {
+          current.description += (current.description ? ' ' : '') + line.trim();
+        }
+      });
+      if (current) results.push(current);
+    }
+
+    // Final fallback: single result from full text
+    if (results.length === 0) {
+      const pct = text.match(/(\d{1,3})\s*%/);
+      results.push({ name: 'See full analysis', confidence: pct ? parseInt(pct[1]) : 0, description: text });
+    }
+
+    return results.slice(0, 3);
+  }
+
+  // ── Render diagnosis cards ────────────────────────────────
+  function renderDiagnosis(text) {
+    const diagnoses = parseDiagnoses(text);
+    const col = document.getElementById('diag-text-col');
+    col.innerHTML = '<p class="section-label">Top Diagnoses</p>';
+
+    diagnoses.forEach((d, i) => {
+      const isPrimary = i === 0;
+      const refImg = getDiseaseImage(d.name);
+      const rankLabels = ['Most likely', '2nd possibility', '3rd possibility'];
+
+      const card = document.createElement('div');
+      card.className = 'diag-card' + (isPrimary ? ' primary' : '');
+      card.innerHTML = `
+        ${refImg ? `<img class="diag-ref-img" src="${refImg}" alt="${esc(d.name)}" onerror="this.style.display='none'" />` : ''}
+        <div class="diag-card-body">
+          <div class="diag-card-header">
+            <span class="diag-name">${esc(d.name)}</span>
+            <span class="diag-rank">${rankLabels[i] || ''}</span>
+          </div>
+          <div class="conf-row">
+            <div class="conf-bar-track">
+              <div class="conf-bar-fill" id="bar-${i}" style="width:0%; background:${confColor(d.confidence)}"></div>
+            </div>
+            <span class="conf-pct" style="color:${confColor(d.confidence)}">${d.confidence}%</span>
+          </div>
+          ${d.description ? `<p class="diag-desc">${esc(d.description)}</p>` : ''}
+        </div>
+      `;
+      col.appendChild(card);
+
+      // Animate bar after paint
+      setTimeout(() => {
+        const bar = document.getElementById(`bar-${i}`);
+        if (bar) bar.style.width = `${d.confidence}%`;
+      }, 50 + i * 120);
+    });
+  }
+
+  // ── Render treatment ──────────────────────────────────────
+  function renderTreatment(text) {
+    const card = document.getElementById('treatment-card');
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const steps = [], prose = [];
+    lines.forEach(line => {
+      const num = line.match(/^(\d+)\.\s+(.+)/);
+      const bul = line.match(/^[-•*]\s+(.+)/);
+      if (num) steps.push({ n: num[1], text: num[2] });
+      else if (bul) steps.push({ n: steps.length + 1, text: bul[1] });
+      else prose.push(line);
+    });
+    if (steps.length > 0) {
+      const stepsHTML = steps.map(s => `<div class="treatment-step"><div class="step-num">${s.n}</div><p class="step-text">${esc(s.text)}</p></div>`).join('');
+      const proseHTML = prose.length ? `<p class="treatment-prose" style="margin-top:12px">${esc(prose.join(' '))}</p>` : '';
+      card.innerHTML = `<div class="treatment-steps">${stepsHTML}</div>${proseHTML}`;
+    } else {
+      card.innerHTML = text.split(/\n{2,}/).map(p => `<p class="treatment-prose">${esc(p.trim())}</p>`).join('');
+    }
+  }
+
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // ── Camera / upload ───────────────────────────────────────
+  function handleUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    e.target.value = ''; pendingBlob = file;
     showPreview(URL.createObjectURL(file));
   }
 
@@ -236,7 +406,7 @@
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false });
       document.getElementById('video').srcObject = stream;
-    } catch (e) { toast('Camera access denied — check browser permissions'); }
+    } catch (e) { toast('Camera access denied'); }
   }
 
   function snapPhoto() {
@@ -255,17 +425,11 @@
   }
 
   function retakePhoto() { pendingBlob = null; showScreen('screen-camera'); }
+  function submitPhoto() { if (!pendingBlob) return; showThinking('Running diagnosis'); sendDiagnosis(pendingBlob); pendingBlob = null; }
 
-  function submitPhoto() {
-    if (!pendingBlob) return;
-    showThinking('Running diagnosis');
-    sendDiagnosis(pendingBlob);
-    pendingBlob = null;
-  }
-
+  // ── API ───────────────────────────────────────────────────
   async function sendDiagnosis(blob) {
-    const form = new FormData();
-    form.append('file', blob, 'plant.jpg');
+    const form = new FormData(); form.append('file', blob, 'plant.jpg');
     try {
       const res = await fetch(`${API}/diagnose`, { method: 'POST', body: form });
       const data = await res.json();
@@ -290,60 +454,18 @@
     } catch (e) { toast(e.message); showScreen('screen-voice'); }
   }
 
-  function renderDiagnosis(text) {
-    const confMatch = text.match(/(\d{1,3})\s*%/);
-    const confidence = confMatch ? parseInt(confMatch[1]) : null;
-    const nameMatch = text.match(/^([^—\-\n\(\.]{4,60}?)(?:\s*[—\-\(:]|\s*\d{1,3}%)/);
-    const diseaseName = nameMatch ? nameMatch[1].trim() : null;
-    const block = document.getElementById('confidence-block');
-    if (confidence !== null && diseaseName) {
-      document.getElementById('disease-name').textContent = diseaseName;
-      const pct = document.getElementById('confidence-pct');
-      pct.textContent = `${confidence}%`; pct.style.color = confColor(confidence);
-      const bar = document.getElementById('confidence-bar');
-      bar.style.background = confColor(confidence);
-      setTimeout(() => { bar.style.width = `${confidence}%`; }, 50);
-      block.style.display = 'flex'; block.style.flexDirection = 'column';
-    } else { block.style.display = 'none'; }
-    document.getElementById('diagnosis-text').textContent = text;
-  }
-
-  function confColor(p) { return p >= 75 ? 'var(--sprout)' : p >= 50 ? 'var(--sun)' : 'var(--warn)'; }
-
-  function renderTreatment(text) {
-    const card = document.getElementById('treatment-card');
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-    const steps = [], prose = [];
-    lines.forEach(line => {
-      const num = line.match(/^(\d+)\.\s+(.+)/);
-      const bul = line.match(/^[-•*]\s+(.+)/);
-      if (num) steps.push({ n: num[1], text: num[2] });
-      else if (bul) steps.push({ n: steps.length + 1, text: bul[1] });
-      else prose.push(line);
-    });
-    if (steps.length > 0) {
-      const stepsHTML = steps.map(s => `<div class="treatment-step"><div class="step-num">${s.n}</div><p class="step-text">${esc(s.text)}</p></div>`).join('');
-      const proseHTML = prose.length ? `<p class="treatment-prose" style="margin-top:12px">${esc(prose.join(' '))}</p>` : '';
-      card.innerHTML = `<div class="treatment-steps">${stepsHTML}</div>${proseHTML}`;
-    } else {
-      card.innerHTML = text.split(/\n{2,}/).map(p => `<p class="treatment-prose" style="margin-bottom:10px">${esc(p.trim())}</p>`).join('');
-    }
-  }
-
-  function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
+  // ── Voice ─────────────────────────────────────────────────
   function setupSpeech() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
     recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
     recognition.onresult = (e) => { let t = ''; for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript; document.getElementById('transcript-box').value = t; };
     recognition.onend = () => stopRecording();
   }
-
   function toggleVoice() { if (!recognition) { toast('Use Chrome for voice — or type below'); return; } isRecording ? stopRecording() : startRecording(); }
   function startRecording() { isRecording = true; document.getElementById('mic-btn').classList.add('recording'); document.getElementById('mic-icon').textContent = '⏹'; document.getElementById('transcript-box').value = ''; recognition.start(); }
   function stopRecording() { isRecording = false; document.getElementById('mic-btn').classList.remove('recording'); document.getElementById('mic-icon').textContent = '🎙'; try { recognition.stop(); } catch(_) {} }
 
+  // ── Util ──────────────────────────────────────────────────
   function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
   function showThinking(sub) { document.getElementById('thinking-sub').textContent = sub; showScreen('screen-thinking'); }
   function goToVoice() { document.getElementById('transcript-box').value = ''; showScreen('screen-voice'); }
