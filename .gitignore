@@ -1,0 +1,21 @@
+# Secrets
+.env
+
+# Model weights (several GB - never commit these)
+model_cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pth
+*.bin
+*.safetensors
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
